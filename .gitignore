@@ -3,3 +3,5 @@ __pycache__/
 .VENV/
 .env
 .papers
+.zed/
+.ropeproject/

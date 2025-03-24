@@ -1,36 +1,45 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import SearchBar from "@/components/ui/searchbar";
 import axios from "axios";
 import "./styles.css";
 import res from "./temp.json";
-import EditableDocument from "@/components/EditableDocument";
+import MarkdownDocument from "@/components/EditableDocument";
 
 const Page = () => {
   const [result, setResults] = useState<{
     message: string;
-    notes: (string | string[])[];
+    notes: string;
   }>({
     message: "",
-    notes: [],
+    notes: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const notesRef = useRef<HTMLDivElement>(null);
 
+  // Add useEffect to scroll when notes are loaded
+  useEffect(() => {
+    if (result.notes && !loading && notesRef.current) {
+      notesRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [result.notes, loading]);
   const handleSearch = async (query: string) => {
     if (!query) return;
     try {
       setLoading(true);
       // Uncomment this when your API is ready
-      // const response = await axios.post(
-      //   `http://127.0.0.1:8000/generate_note/`,
-      //   {
-      //     params: { query: query },
-      //   },
-      // );
-      // console.log(response.data);
-      // setResults(response.data["notes"]);
-      setResults(res);
-      console.log(result.notes);
+      const response = await axios.post(
+        `http://127.0.0.1:8000/generate_note/`,
+        {
+          params: { query: query },
+        },
+      );
+      console.log(response.data);
+      setResults(response.data);
+      // setResults(res);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -38,15 +47,14 @@ const Page = () => {
     }
   };
 
-  const handleSaveNotes = (updatedNotes: (string | string[])[]) => {
+  const handleSaveMarkdown = (updatedMarkdown: string) => {
     setResults((prev) => ({
       ...prev,
-      notes: updatedNotes,
+      notes: updatedMarkdown,
     }));
 
-    // Here you could also send the updated notes to your API
-    // to save them permanently
-    console.log("Notes updated:", updatedNotes);
+    // Here you could also send the updated markdown to your API
+    console.log("Markdown updated:", updatedMarkdown);
   };
 
   return (
@@ -55,9 +63,12 @@ const Page = () => {
       <SearchBar onSearch={handleSearch} />
       {loading && <div className="loader"></div>}
 
-      {result.notes && result.notes.length > 0 && (
+      {result.notes && (
         <div className="w-full max-w-4xl mt-8">
-          <EditableDocument notes={result.notes} onSave={handleSaveNotes} />
+          <MarkdownDocument
+            markdown={result.notes}
+            onSave={handleSaveMarkdown}
+          />
         </div>
       )}
     </div>

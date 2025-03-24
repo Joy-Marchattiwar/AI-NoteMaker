@@ -1,36 +1,4 @@
 {
   "message": "Notes generated successfully",
-  "notes": [
-    "# Advanced Organic Chemistry Notes\n\n## 1. Stereochemistry\n### 1.1 Definitions and Key Concepts\n- **Stereoisomerism**: Molecules with the same molecular formula and connectivity but different spatial arrangements.  \n- **Chirality**: Property of molecules that cannot be superimposed on their mirror images (e.g., enantiomers).  \n",
-    [
-      "https://homework.study.com/cimages/multimages/16/chiral_57486120127280962878.png",
-      "https://research.cm.utexas.edu/nbauld/teach/chiral.jpeg",
-      "https://chem.libretexts.org/@api/deki/files/398872/illustration_of_the_mirror_images_of_2-butanol_are_not_superimposable_and_therefore_not_the_same_molecule.svg?revision=1&size=bestfit&width=478&height=297"
-    ],
-    "\n- **Stereoisomers**: Include enantiomers, diastereomers, and meso compounds.  \n- **Chiral Center**: A tetrahedral atom (usually carbon) with four different substituents.  \n\n### 1.2 Types of Stereoisomerism\n- **Enantiomers**:  \n  - Non-superimposable mirror images.  \n ",
-    [
-      "https://www.chemistrylearner.com/wp-content/uploads/2023/05/Enantiomers.jpg",
-      "https://kmchemistry.com/wp-content/uploads/2022/08/GC-11.jpg",
-      "https://chem.libretexts.org/@api/deki/files/460815/0fdcb57a71a0e89041839f0d6312494e8a11a4cf?revision=1&size=bestfit&width=546&height=400"
-    ],
-    "  \n  - Example: (+)-Lactic acid vs. (-)-Lactic acid.  \n  - **Optical Activity**: Rotation of plane-polarized light (measured by polarimetry).  \n- **Diastereomers**:  \n  - Stereoisomers not related as mirror images.  \n  - Example: D- and L-tartaric acid (excluding the meso form).  \n- **Meso Compounds**:  \n  - Compounds with chiral centers but overall lack of chirality due to internal symmetry.  \n  ",
-    [
-      "https://www.aceorganicchem.com/blog/wp-content/uploads/2013/05/Slide1.jpg",
-      "https://homework.study.com/cimages/multimages/16/troopmessenger_1663701896506_1232246956130532053005.jpg",
-      "https://www2.chemistry.msu.edu/faculty/reusch/virttxtjml/Images/mesotart.gif"
-    ],
-    "  \n\n### 1.3 Analysis and Determination\n- **Optical Rotation**: Measured using a polarimeter; reported as [α]°.  \n  ",
-    [
-      "https://www.chem.ucla.edu/~bacher/Specialtopics/polarimetry%20setup.gif",
-      "https://i0.wp.com/rudolphresearch.com/wp-content/uploads/2012/12/Polarimerty-Diagram-Image.png?resize=949%2C651&ssl=1",
-      "https://rudolphresearch.com/wp-content/uploads/2012/12/Polarimerty-Diagram-Image.png"
-    ],
-    "  \n- **NMR Spectroscopy**:  \n  - **Coupling Constants (J)**: Reflect spatial relationships between hydrogens.  \n  - **Diastereotopic Protons**: Distinguishable protons with different chemical shifts.  \n  ",
-    [
-      "https://cdn.masterorganicchemistry.com/wp-content/uploads/2022/02/1-dimethylethylene.gif",
-      "https://cdn.masterorganicchemistry.com/wp-content/uploads/2022/02/3-dimethylethylene.gif",
-      "https://www.chemistrysteps.com/wp-content/uploads/2020/02/diastereotopic-prptons-example.png"
-    ],
-    "  \n- **X-ray Crystallography**: Definitive method for determining absolute configuration.  \n  "
-  ]
+  "notes": "# Advanced Organic Chemistry Notes\n\n## 1. Stereochemistry\n### 1.1 Definitions and Key Concepts\n- **Stereoisomerism**: Molecules with the same molecular formula and connectivity but different spatial arrangements.  \n- **Chirality**: Property of molecules that cannot be superimposed on their mirror images (e.g., enantiomers).  \n ![alt_text](https://homework.study.com/cimages/multimages/16/chiral_57486120127280962878.png)"
 }

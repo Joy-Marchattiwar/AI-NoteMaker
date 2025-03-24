@@ -9,7 +9,7 @@ from google_images_search import GoogleImagesSearch
 load_dotenv()
 OR_API_KEY=os.getenv("OPEN_ROUTER_API_KEY")
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-index = pc.Index("notecraft") 
+index = pc.Index("notecraft")
 
 topics_query:str="Generate 10 subtopics that should be covered in this topic from an academic perspective. " \
 "If subtopics are already present in the content, retain them without modification. " \
@@ -19,7 +19,7 @@ topics_query:str="Generate 10 subtopics that should be covered in this topic fro
     "eg-{'namespace': 'cs_math', 'topics': ['machine_learning_algorithms', ....]}"\
     "namespace list-physics,chemistry,energy_sustainability,mathematics_applied_math,earth_sciences,psychology_cognitive_science,biology,medicine,agriculture_food_science,engineering,technology_innovation,cs_math,social_sciences,arts_humanities,business_management,history,law_policy,philosophy_ethics"
 
-def request_OpenRouter(query:str)->Any:
+def request_OpenRouter(query:str)->str:
     response = requests.post(
         url="https://openrouter.ai/api/v1/chat/completions",
         headers={
@@ -37,7 +37,7 @@ def request_OpenRouter(query:str)->Any:
             "parameters": {
         "language": "en"  # Specify language preference
     }
-            
+
         })
         )
     return response.json()['choices'][0]['message']['content']
@@ -53,28 +53,28 @@ def get_context(topic:str,namespace:str)->Dict:
                 parameters={"input_type": "query"},
             )[0].values
         results = index.query(
-                namespace=namespace,  
+                namespace=namespace,
                 vector=query_embedding,
-                top_k=5, 
+                top_k=3,
                 include_metadata=True
             )
         if results.matches:
                 # Fetch relevant documents from Pinecone
                 relevant_docs = [
-                    match.metadata["text"] for match in results.matches 
-                    if match.score >=0.2
+                    match.metadata["text"] for match in results.matches
                 ]
 
-                if relevant_docs:return {"message": "Relevant documents found", "documents": relevant_docs}
+                if relevant_docs:
+                    return {"message": "Relevant documents found", "documents": relevant_docs}
     except Exception as e:
             print(e)
             return {"message": "Error querying Pinecone", "error": str(e)}
-    
 
-def google_search_image(query:str)->List[str]:
+
+def google_search_image(query:str)->str:
     gis=GoogleImagesSearch(developer_key=os.getenv("GOOGLE_API_KEY"),custom_search_cx=os.getenv("CX"))
-    gis.search(search_params={'q': query,'num':5})
-    return [image.url for image in gis.results()]
+    gis.search(search_params={'q': query,'num':1})
+    return [image.url for image in gis.results()][0]
 
 
 if __name__ == "__main__":

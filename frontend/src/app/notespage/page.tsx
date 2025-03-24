@@ -5,6 +5,7 @@ import axios from "axios";
 import "./styles.css";
 import res from "./temp.json";
 import MarkdownDocument from "@/components/EditableDocument";
+import "katex/dist/katex.min.css";
 
 const Page = () => {
   const [result, setResults] = useState<{
@@ -30,16 +31,15 @@ const Page = () => {
     if (!query) return;
     try {
       setLoading(true);
-      // Uncomment this when your API is ready
-      const response = await axios.post(
-        `http://127.0.0.1:8000/generate_note/`,
-        {
-          params: { query: query },
-        },
-      );
-      console.log(response.data);
-      setResults(response.data);
-      // setResults(res);
+      // const response = await axios.post(
+      //   `http://127.0.0.1:8000/generate_note/`,
+      //   {
+      //     params: { query: query },
+      //   },
+      // );
+      // console.log(response.data);
+      // setResults(response.data);
+      setResults(res);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -52,11 +52,13 @@ const Page = () => {
       ...prev,
       notes: updatedMarkdown,
     }));
-
-    // Here you could also send the updated markdown to your API
-    console.log("Markdown updated:", updatedMarkdown);
   };
+  const replaceMathDelimiters = (text: string): string => {
+    let updatedText = text.replace(/\\\(/g, "$$");
+    updatedText = updatedText.replace(/\\\)/g, "$$");
 
+    return updatedText;
+  };
   return (
     <div className="flex flex-col items-center">
       <h1 className="text-4xl font-bold mt-12">Build Notes</h1>
@@ -66,7 +68,7 @@ const Page = () => {
       {result.notes && (
         <div className="w-full max-w-4xl mt-8">
           <MarkdownDocument
-            markdown={result.notes}
+            markdown={replaceMathDelimiters(result.notes)}
             onSave={handleSaveMarkdown}
           />
         </div>

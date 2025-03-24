@@ -64,13 +64,38 @@ class GenerateNoteView(APIView):
         # except (TypeError,RequestException) as e:
         #     return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
 
-        arr=notes.split("&&&")
-        for i in range(len(arr)):
-            if arr[i].startswith("image:"):
-                image_query=arr[i].split("image:")[1]
-                try:
-                    arr[i]=f"![{image_query}]({google_search_image(image_query)})"
-                except (TypeError,RequestException,GoogleBackendException) as e:
-                    return Response({"message": "Error in response from Fetching Images","error": str(e)},status=500)
+        # arr=notes.split("&&&")
+        # processed_notes = []
 
-        return Response({"message": "Notes generated successfully","notes": "".join(arr)})
+        # for line in arr:
+        #         if line.startswith("image:"):
+        #             image_query = line.split("image:", 1)[1].strip()
+        #             image_url = google_search_image(image_query)
+        #             processed_notes.append(f"![{image_query}]({image_url})")
+        #         else:
+        #             processed_notes.append(line)
+
+        return Response({"message": "Notes generated successfully","notes": "".join(notes)})
+
+
+class ModifyTextView(APIView):
+    def post(self,request:Request)->Response:
+        change_text:str=request.data.get("text")
+        print(change_text)
+        try:
+            response:str=request_OpenRouter(change_text+"rework this part of text to get more clarity and elaborate the ouput should be in ```text box the new content should not be more than 3 times original lenght")
+            start:int = response.find("```text") + len("```text")
+            end:int = response.find("```", start)
+            new_text:str = response[start:end].strip()
+            return Response({"message": "Text modified successfully","modifiedContent": new_text})
+        except (TypeError,RequestException) as e:
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
+
+class ModifyImageView(APIView):
+    def post(self,request:Request)->Response:
+        change_image:str=request.data.get("imgText")
+        try:
+            new_image_url:str=google_search_image(change_image)
+            return Response({"message": "Image modified successfully","modifiedContent": f"![{change_image}]({new_image_url})"})
+        except (TypeError,RequestException) as e:
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)

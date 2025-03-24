@@ -20,5 +20,7 @@ from NoteMaker.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', HelloWorldView.as_view()),
-    path('generate_note/', GenerateNoteView.as_view())
+    path('generate_note/', GenerateNoteView.as_view()),
+    path('modify_image/', ModifyImageView.as_view()),
+    path('modify_text/', ModifyTextView.as_view())
 ]

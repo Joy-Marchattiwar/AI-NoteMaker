@@ -5,8 +5,13 @@ import json
 from dotenv import load_dotenv
 from pinecone import Pinecone
 from google_images_search import GoogleImagesSearch
-
+from requests.exceptions import RequestException
+from django.core.cache import cache
+import random
 load_dotenv()
+global gis
+gis = GoogleImagesSearch(developer_key=os.getenv("GOOGLE_API_KEY"), custom_search_cx=os.getenv("CX"))
+
 OR_API_KEY=os.getenv("OPEN_ROUTER_API_KEY")
 pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 index = pc.Index("notecraft")
@@ -71,11 +76,28 @@ def get_context(topic:str,namespace:str)->Dict:
             return {"message": "Error querying Pinecone", "error": str(e)}
 
 
-def google_search_image(query:str)->str:
-    gis=GoogleImagesSearch(developer_key=os.getenv("GOOGLE_API_KEY"),custom_search_cx=os.getenv("CX"))
-    gis.search(search_params={'q': query,'num':1})
-    return [image.url for image in gis.results()][0]
+def google_search_image(query: str) -> str:
+    """Fetches the first image result for a given query using Google Images Search API."""
+    cache_key = f"image_url_{query}"
 
+    # Check cache first
+    cached_url = cache.get(cache_key)
+    if cached_url:
+        return cached_url
 
+    try:
+        gis.search(search_params={'q': query, 'num': 1})
+        image_url = gis.results()[0].url if gis.results() else "https://via.placeholder.com/150"
+
+        # Store in cache for future use (optional: set expiry)
+        cache.set(cache_key, image_url, timeout=86400)  # Cache for 1 day
+        return image_url
+    except (IndexError, RequestException):
+        return "https://via.placeholder.com/150"
+
+def new_image(query:str)->str:
+    gis.search(search_params={'q': query, 'num': 5})
+    image_url = gis.results()[random.randint(0,5)].url if gis.results() else "https://via.placeholder.com/150"
+    return image_url
 if __name__ == "__main__":
     print(google_search_image("Eiffel Tower"))

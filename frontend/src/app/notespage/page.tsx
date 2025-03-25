@@ -54,8 +54,13 @@ const Page = () => {
     }));
   };
   const replaceMathDelimiters = (text: string): string => {
-    let updatedText = text.replace(/\\\(/g, "$$");
-    updatedText = updatedText.replace(/\\\)/g, "$$");
+    // Replace \[ and \] with $$ (display math)
+    let updatedText = text.replace(/\\\[/g, "$$$");
+    updatedText = updatedText.replace(/\\\]/g, "$$$");
+
+    // Replace \( and \) with $ (inline math)
+    updatedText = updatedText.replace(/\\\(/g, "$");
+    updatedText = updatedText.replace(/\\\)/g, "$");
 
     return updatedText;
   };

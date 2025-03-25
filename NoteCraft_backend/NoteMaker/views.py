@@ -4,7 +4,11 @@ from rest_framework.views import APIView
 from typing import Dict
 from .myutils import request_OpenRouter,google_search_image,get_context,topics_query
 from requests.exceptions import RequestException
-from google_images_search import GoogleBackendException
+import requests
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from rest_framework import status
 import json
 class HelloWorldView(APIView):
     def get(self, request:Request)->Response:
@@ -29,7 +33,7 @@ class GenerateNoteView(APIView):
             json_str:str = response[start:end].strip()
             fresponse:Dict=json.loads(json_str)
         except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         context=get_context(prompt,namespace=fresponse['namespace'])
 
 
@@ -48,7 +52,7 @@ class GenerateNoteView(APIView):
             end = notes.find("```", start)
             notes=notes[start:end].strip()
         except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # images_prompt:str="taking these notes and add images to make them more engaging and visually appealing.\
         # to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
@@ -89,7 +93,7 @@ class ModifyTextView(APIView):
             new_text:str = response[start:end].strip()
             return Response({"message": "Text modified successfully","modifiedContent": new_text})
         except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ModifyImageView(APIView):
     def post(self,request:Request)->Response:
@@ -98,4 +102,29 @@ class ModifyImageView(APIView):
             new_image_url:str=google_search_image(change_image)
             return Response({"message": "Image modified successfully","modifiedContent": f"![{change_image}]({new_image_url})"})
         except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
+            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ProxyImageView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Get the image URL from the query parameters
+        image_url = request.query_params.get('url', None)
+        if not image_url:
+            return Response({"error": "Image URL is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Fetch the image from the external URL
+            response = requests.get(image_url, stream=True)
+            response.raise_for_status()
+
+            # Set CORS headers
+            http_response = HttpResponse(
+                response.raw,
+                content_type=response.headers.get('Content-Type')
+            )
+            http_response['Access-Control-Allow-Origin'] = '*'
+
+            return http_response
+
+        except requests.RequestException as e:
+            return Response({"error": f"Failed to fetch image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

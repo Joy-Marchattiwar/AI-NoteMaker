@@ -22,5 +22,6 @@ urlpatterns = [
     path('hello/', HelloWorldView.as_view()),
     path('generate_note/', GenerateNoteView.as_view()),
     path('modify_image/', ModifyImageView.as_view()),
-    path('modify_text/', ModifyTextView.as_view())
+    path('modify_text/', ModifyTextView.as_view()),
+    path('proxy-image/',ProxyImageView.as_view())
 ]

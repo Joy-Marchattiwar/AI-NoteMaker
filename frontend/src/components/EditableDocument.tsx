@@ -96,11 +96,11 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
 
     // Create a clone of the content to avoid modifying the visible DOM
     const contentClone = markdownRef.current.cloneNode(true) as HTMLElement;
-    const tempContainer = document.createElement('div');
+    const tempContainer = document.createElement("div");
     tempContainer.appendChild(contentClone);
 
     // Apply PDF-specific styles
-    const styleElement = document.createElement('style');
+    const styleElement = document.createElement("style");
     styleElement.textContent = `
       * {
         font-family: 'Helvetica', Arial, sans-serif;
@@ -121,16 +121,25 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
 
     // Add page breaks before major headers if page breaks are enabled
     if (pdfSettings.pageBreaks) {
-      const headers = contentClone.querySelectorAll('h1, h2');
+      const headers = contentClone.querySelectorAll("h1, h2");
       headers.forEach((header, index) => {
         // Skip the first header to avoid a page break at the beginning
         if (index > 0) {
-          const pageBreakDiv = document.createElement('div');
-          pageBreakDiv.className = 'page-break';
+          const pageBreakDiv = document.createElement("div");
+          pageBreakDiv.className = "page-break";
           header.parentNode?.insertBefore(pageBreakDiv, header);
         }
       });
     }
+    const images = contentClone.querySelectorAll("img");
+    images.forEach((img) => {
+      const originalSrc = img.getAttribute("src");
+      if (originalSrc && !originalSrc.startsWith("data:")) {
+        const proxiedUrl = `http://127.0.0.1:8000/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
+        console.log(`Rewriting image URL: ${originalSrc} -> ${proxiedUrl}`);
+        img.setAttribute("src", proxiedUrl);
+      }
+    });
 
     return tempContainer;
   };
@@ -147,16 +156,16 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       if (!preparedContent) return;
 
       // Temporarily append the prepared content to the document body
-      preparedContent.style.position = 'absolute';
-      preparedContent.style.top = '-9999px';
-      preparedContent.style.width = '794px'; // A4 width at 96 DPI
+      preparedContent.style.position = "absolute";
+      preparedContent.style.top = "-9999px";
+      preparedContent.style.width = "794px"; // A4 width at 96 DPI
       document.body.appendChild(preparedContent);
 
       // Create PDF (A4 size)
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4',
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
 
       // A4 dimensions in mm
@@ -165,14 +174,14 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       const contentWidth = preparedContent.offsetWidth;
 
       // Calculate the scaling factor
-      const scale = (pdfWidth - (pdfSettings.margins * 2)) / contentWidth;
+      const scale = (pdfWidth - pdfSettings.margins * 2) / contentWidth;
 
       // Get the actual height of the content
       const contentHeight = preparedContent.offsetHeight;
 
       // Calculate how many pages we'll need
-      const pageHeight = (pdfHeight - (pdfSettings.margins * 2));
-      const totalPages = Math.ceil(contentHeight * scale / pageHeight);
+      const pageHeight = pdfHeight - pdfSettings.margins * 2;
+      const totalPages = Math.ceil((contentHeight * scale) / pageHeight);
 
       // Determine position for each page's content
       for (let page = 0; page < totalPages; page++) {
@@ -184,7 +193,12 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         if (pdfSettings.showPageNumbers) {
           pdf.setFontSize(9);
           pdf.setTextColor(100, 100, 100);
-          pdf.text(`Page ${page + 1} of ${totalPages}`, pdfWidth / 2, pdfHeight - 5, { align: 'center' });
+          pdf.text(
+            `Page ${page + 1} of ${totalPages}`,
+            pdfWidth / 2,
+            pdfHeight - 5,
+            { align: "center" },
+          );
         }
 
         // Calculate which portion of the content to capture for this page
@@ -201,16 +215,16 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         });
 
         // Add the image to the PDF
-        const imgData = canvas.toDataURL('image/png');
+        const imgData = canvas.toDataURL("image/png");
         pdf.addImage(
           imgData,
-          'PNG',
+          "PNG",
           pdfSettings.margins,
           pdfSettings.margins,
-          pdfWidth - (pdfSettings.margins * 2),
+          pdfWidth - pdfSettings.margins * 2,
           0, // Let height be calculated automatically to maintain aspect ratio
-          '',
-          'FAST'
+          "",
+          "FAST",
         );
       }
 
@@ -232,11 +246,18 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       <h3 className="text-lg font-medium mb-3">PDF Export Settings</h3>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Line Spacing</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Line Spacing
+          </label>
           <select
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={pdfSettings.lineSpacing}
-            onChange={(e) => setPdfSettings({...pdfSettings, lineSpacing: parseFloat(e.target.value)})}
+            onChange={(e) =>
+              setPdfSettings({
+                ...pdfSettings,
+                lineSpacing: parseFloat(e.target.value),
+              })
+            }
           >
             <option value="1">Single</option>
             <option value="1.15">Narrow</option>
@@ -246,11 +267,18 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Font Size</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Font Size
+          </label>
           <select
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={pdfSettings.fontSize}
-            onChange={(e) => setPdfSettings({...pdfSettings, fontSize: parseInt(e.target.value)})}
+            onChange={(e) =>
+              setPdfSettings({
+                ...pdfSettings,
+                fontSize: parseInt(e.target.value),
+              })
+            }
           >
             <option value="10">Small (10pt)</option>
             <option value="12">Normal (12pt)</option>
@@ -260,11 +288,18 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Margins</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Margins
+          </label>
           <select
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
             value={pdfSettings.margins}
-            onChange={(e) => setPdfSettings({...pdfSettings, margins: parseInt(e.target.value)})}
+            onChange={(e) =>
+              setPdfSettings({
+                ...pdfSettings,
+                margins: parseInt(e.target.value),
+              })
+            }
           >
             <option value="10">Narrow (10mm)</option>
             <option value="15">Normal (15mm)</option>
@@ -278,9 +313,14 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             type="checkbox"
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             checked={pdfSettings.pageBreaks}
-            onChange={(e) => setPdfSettings({...pdfSettings, pageBreaks: e.target.checked})}
+            onChange={(e) =>
+              setPdfSettings({ ...pdfSettings, pageBreaks: e.target.checked })
+            }
           />
-          <label htmlFor="pageBreaks" className="ml-2 block text-sm text-gray-700">
+          <label
+            htmlFor="pageBreaks"
+            className="ml-2 block text-sm text-gray-700"
+          >
             Add page breaks at headings
           </label>
         </div>
@@ -291,9 +331,17 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             type="checkbox"
             className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             checked={pdfSettings.showPageNumbers}
-            onChange={(e) => setPdfSettings({...pdfSettings, showPageNumbers: e.target.checked})}
+            onChange={(e) =>
+              setPdfSettings({
+                ...pdfSettings,
+                showPageNumbers: e.target.checked,
+              })
+            }
           />
-          <label htmlFor="showPageNumbers" className="ml-2 block text-sm text-gray-700">
+          <label
+            htmlFor="showPageNumbers"
+            className="ml-2 block text-sm text-gray-700"
+          >
             Show page numbers
           </label>
         </div>
@@ -373,10 +421,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             </div>
           </div>
 
-          <div
-            ref={markdownRef}
-            className="prose max-w-none p-4 bg-white"
-          >
+          <div ref={markdownRef} className="prose max-w-none p-4 bg-white">
             <ReactMarkdown
               remarkPlugins={[remarkMath]}
               rehypePlugins={[rehypeKatex]}

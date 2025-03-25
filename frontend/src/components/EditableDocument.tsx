@@ -149,8 +149,9 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
 
     try {
       setExportLoading(true);
-      const filename = `NoteCraft-${new Date().toISOString().slice(0, 10)}.pdf`;
 
+      const documentName = prompt("Please enter the name of the document:");
+      const filename = `${documentName}-NoteCraft-${new Date().toISOString().slice(0, 10)}.pdf`;
       // Get prepared content with improved styling and page breaks
       const preparedContent = prepareForPdfExport();
       if (!preparedContent) return;
@@ -230,9 +231,27 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
 
       // Save the PDF
       pdf.save(filename);
-
+      const pdfBlob = pdf.output("blob");
+      const formData = new FormData();
+      formData.append("topic", filename); // Replace with dynamic topic if needed
+      formData.append("pdf_file", pdfBlob, "document.pdf"); // Name the file as 'document.pdf'
       // Clean up
       document.body.removeChild(preparedContent);
+      try {
+        const response = await fetch("http://your-backend-url/api/documents/", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("PDF uploaded successfully:", result);
+      } catch (error) {
+        console.error("Error uploading PDF:", error);
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {

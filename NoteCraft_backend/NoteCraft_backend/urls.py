@@ -17,11 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from NoteMaker.views import *
+from UserData.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', HelloWorldView.as_view()),
     path('generate_note/', GenerateNoteView.as_view()),
     path('modify_image/', ModifyImageView.as_view()),
     path('modify_text/', ModifyTextView.as_view()),
-    path('proxy-image/',ProxyImageView.as_view())
+    path('proxy-image/',ProxyImageView.as_view()),
+    path('add_pdf/',DocumentUploadView.as_view()),
+    path('signup/', SignupView.as_view(), name='signup'),
+    path('login/', LoginView.as_view(), name='login'),
 ]

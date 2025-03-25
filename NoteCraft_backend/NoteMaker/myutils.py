@@ -68,9 +68,9 @@ def get_context(topic:str,namespace:str)->Dict:
                 relevant_docs = [
                     match.metadata["text"] for match in results.matches
                 ]
-
-                if relevant_docs:
-                    return {"message": "Relevant documents found", "documents": relevant_docs}
+                return {"message": "Relevant documents found", "documents": relevant_docs}
+        else:
+            return{"message":"No relevant documents found"}
     except Exception as e:
             print(e)
             return {"message": "Error querying Pinecone", "error": str(e)}

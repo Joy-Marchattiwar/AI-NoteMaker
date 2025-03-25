@@ -64,18 +64,18 @@ class GenerateNoteView(APIView):
         # except (TypeError,RequestException) as e:
         #     return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
 
-        # arr=notes.split("&&&")
-        # processed_notes = []
+        arr=notes.split("&&&")
+        processed_notes = []
 
-        # for line in arr:
-        #         if line.startswith("image:"):
-        #             image_query = line.split("image:", 1)[1].strip()
-        #             image_url = google_search_image(image_query)
-        #             processed_notes.append(f"![{image_query}]({image_url})")
-        #         else:
-        #             processed_notes.append(line)
+        for line in arr:
+                if line.startswith("image:"):
+                    image_query = line.split("image:", 1)[1].strip()
+                    image_url = google_search_image(image_query)
+                    processed_notes.append(f"![{image_query}]({image_url})")
+                else:
+                    processed_notes.append(line)
 
-        return Response({"message": "Notes generated successfully","notes": "".join(notes)})
+        return Response({"message": "Notes generated successfully","notes": "".join(processed_notes)})
 
 
 class ModifyTextView(APIView):

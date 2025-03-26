@@ -1,7 +1,8 @@
+"use client"
 import React, { useState } from "react";
 import "./styles.css"; // Ensure this CSS file exists in the correct path
 import Link from "next/link";
-
+import { useRouter } from "next/navigation";
 const LoginPage = () => {
   // State for form fields
   const [formData, setFormData] = useState({
@@ -9,11 +10,11 @@ const LoginPage = () => {
     password: "",
   });
 
-  // State for error messages
-  const [error, setError] = useState("");
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -22,12 +23,11 @@ const LoginPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { username, password } = formData;
 
-    // Basic validation
     if (!username || !password) {
       setError("All fields are required.");
       return;
@@ -57,9 +57,10 @@ const LoginPage = () => {
         // Store the JWT token (e.g., in localStorage or cookies)
         localStorage.setItem("accessToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
+        localStorage.setItem("isLoggedIn", "true");
 
-        // Redirect to a protected page or dashboard
-        window.location.href = "/dashboard";
+
+        router.push("/notespage");
       } else {
         // Handle backend errors
         setError(data.message || "Invalid username or password.");

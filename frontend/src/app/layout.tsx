@@ -1,15 +1,22 @@
+"use client"
 import type React from "react"
 import { BookOpen } from "lucide-react"
 import Link from "next/link"
 import "./globals.css"
 import { ThemeProvider } from "next-themes"
 import { Button } from "@/components/ui/button"
-
+import { useEffect, useRef } from 'react';
+import { Player } from '@lordicon/react';
+const ICON = require('./assets/wired-flat-245-edit-document-in-reveal.json');
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const playerRef = useRef<Player>(null);
+  useEffect(() => {
+    playerRef.current?.playFromBeginning();
+    }, [])
   return (
     <html lang="en">
       <body>
@@ -19,20 +26,14 @@ export default function RootLayout({
               <div className="container flex h-16 items-center justify-between py-4">
                 <div className="flex items-center gap-2">
                   <Link href="/" className="flex items-center gap-2">
-                    <BookOpen className="h-6 w-6" />
+                     <Player 
+                        ref={playerRef} 
+                        icon={ ICON }
+                    />
                     <span className="text-xl font-bold">Notecraft</span>
                   </Link>
                 </div>
                 <nav className="flex gap-6">
-                  <Link href="/document/doc-1" className="text-sm font-medium transition-colors hover:text-primary">
-                    Documents
-                  </Link>
-                  <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-                    Templates
-                  </Link>
-                  <Link href="#" className="text-sm font-medium transition-colors hover:text-primary">
-                    Settings
-                  </Link>
                 </nav>
                 <div className="flex items-center gap-4">
             <Link href="/login" className="text-sm font-medium transition-colors hover:text-primary">

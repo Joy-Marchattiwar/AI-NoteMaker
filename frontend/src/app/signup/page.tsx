@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import "../login/styles.css"; // Ensure this CSS file exists in the correct path
 import Link from "next/link";
@@ -14,7 +15,7 @@ const SignupPage = () => {
   const [error, setError] = useState("");
 
   // Handle input changes
-  const handleChange = (e) => {
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -23,7 +24,7 @@ const SignupPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:React.FocusEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { username, password, confirmPassword } = formData;

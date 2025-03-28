@@ -28,4 +28,5 @@ urlpatterns = [
     path('add_pdf/',DocumentUploadView.as_view()),
     path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
+    path('search_pdfs/',ListDocumentView.as_view())
 ]

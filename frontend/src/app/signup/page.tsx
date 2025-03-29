@@ -35,15 +35,10 @@ const SignupPage = () => {
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
     try {
       // Send a POST request to the backend API
       const response = await fetch(
-        "http://your-backend-url/api/accounts/signup/",
+        "http://127.0.0.1:8000/signup/",
         {
           method: "POST",
           headers: {
@@ -52,6 +47,7 @@ const SignupPage = () => {
           body: JSON.stringify({
             username,
             password,
+            "confirm_password":confirmPassword
           }),
         },
       );

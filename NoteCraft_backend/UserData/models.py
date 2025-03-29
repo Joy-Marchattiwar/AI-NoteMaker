@@ -7,7 +7,7 @@ class User(AbstractUser):
 class Document(models.Model):
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     topic = models.CharField(max_length=255)
-    pdf_public_id = models.CharField(max_length=500,unique=True)  
+    pdf_public_id = models.CharField(max_length=500)  
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='documents')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 

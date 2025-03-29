@@ -36,7 +36,7 @@ const LoginPage = () => {
     try {
       // Send a POST request to the backend API
       const response = await fetch(
-        "http://your-backend-url/api/accounts/login/",
+        "http://127.0.0.1:8000/login/",
         {
           method: "POST",
           headers: {

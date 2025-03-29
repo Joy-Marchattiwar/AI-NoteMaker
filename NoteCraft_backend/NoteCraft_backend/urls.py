@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from NoteMaker.views import *
 from UserData.views import *
+from rest_framework_simplejwt.views import TokenRefreshView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('hello/', HelloWorldView.as_view()),
@@ -28,5 +29,6 @@ urlpatterns = [
     path('add_pdf/',DocumentUploadView.as_view()),
     path('signup/', SignupView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
-    path('search_pdfs/',ListDocumentView.as_view())
+    path('search_pdfs/',ListDocumentView.as_view()),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]

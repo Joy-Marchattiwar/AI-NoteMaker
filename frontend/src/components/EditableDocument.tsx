@@ -136,14 +136,44 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       const originalSrc = img.getAttribute("src");
       if (originalSrc && !originalSrc.startsWith("data:")) {
         const proxiedUrl = `http://127.0.0.1:8000/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
-        console.log(`Rewriting image URL: ${originalSrc} -> ${proxiedUrl}`);
+        // console.log(`Rewriting image URL: ${originalSrc} -> ${proxiedUrl}`);
         img.setAttribute("src", proxiedUrl);
       }
     });
 
     return tempContainer;
   };
-
+  async function refreshToken() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/token/refresh/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          refresh: localStorage.getItem("refreshToken"),
+        }),
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        // Store the new access token
+        localStorage.setItem("accessToken", data.access);
+        return true;
+      } else {
+        // If refresh token is also invalid, logout user
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("isLoggedIn");
+        // Redirect to login page
+        window.location.href = "/login";
+        return false;
+      }
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      return false;
+    }
+  }
   const exportToPdf = async () => {
     if (!markdownRef.current) return;
 
@@ -229,20 +259,45 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         );
       }
 
-      // Save the PDF
+      console.log("pdf generated")
       pdf.save(filename);
       const pdfBlob = pdf.output("blob");
       const formData = new FormData();
-      formData.append("topic", filename); // Replace with dynamic topic if needed
-      formData.append("pdf_file", pdfBlob, "document.pdf"); // Name the file as 'document.pdf'
-      // Clean up
+      formData.append("topic", documentName);
+      formData.append("pdf_file", pdfBlob); 
+      console.log(formData)
       document.body.removeChild(preparedContent);
+      console.log("Access token:", localStorage.getItem("accessToken"));
       try {
-        const response = await fetch("http://your-backend-url/api/documents/", {
+        let response = await fetch("http://127.0.0.1:8000/add_pdf/", {
           method: "POST",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
+          },
           body: formData,
         });
-
+        if (response.status === 401) {
+          const responseData = await response.json();
+          
+          if (responseData.code === "token_not_valid") {
+            // Try to refresh the token
+            const refreshed = await refreshToken();
+            
+            if (refreshed) {
+              // Retry the request with the new token
+              const newToken = localStorage.getItem("accessToken");
+              response = await fetch("http://127.0.0.1:8000/add_pdf/", {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${newToken}`,
+                },
+                body: formData,
+              });
+            } else {
+              throw new Error("Session expired. Please login again.");
+            }
+          }
+        }
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }

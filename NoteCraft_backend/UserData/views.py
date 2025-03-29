@@ -13,7 +13,14 @@ from dotenv import load_dotenv
 import base64
 import requests
 from cloudinary.utils import cloudinary_url
+import os
 load_dotenv()
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_NAME'),
+    api_key=os.getenv('CLOUDINARY_API'),
+    api_secret =os.getenv('CLOUDINARY_KEY'),
+)
+
 config = cloudinary.config(secure=True)
 
 
@@ -44,15 +51,14 @@ class DocumentUploadView(APIView):
             # Upload the file to Cloudinary
             upload_result = cloudinary.uploader.upload(
                 pdf_file,
-                resource_type="raw",  # Use "raw" for non-image files like PDFs
-                folder="documents"    # Optional: Organize files in a folder
+                resource_type="raw",  
+                folder="documents"   
             )
 
-            # Save the Cloudinary URL to the database
             document = Document.objects.create(
                 id=uuid.uuid4(),
                 topic=topic,
-                pdf_url=upload_result['secure_url'],  # Secure URL for the uploaded file
+                pdf_public_id=upload_result['secure_url'],  
                 uploaded_by=request.user
             )
 
@@ -66,6 +72,7 @@ class DocumentUploadView(APIView):
 class SignupView(APIView):
     def post(self, request:Request)->Response:
         serializer = UserSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

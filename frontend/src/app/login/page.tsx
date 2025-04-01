@@ -1,10 +1,11 @@
 "use client"
-import React, { useState } from "react";
-import "./styles.css"; // Ensure this CSS file exists in the correct path
+import React, { useContext, useState } from "react";
+import "./styles.css"; 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "../contexts/AuthContext";
 const LoginPage = () => {
-  // State for form fields
+  const { isLoggedIn,setIsLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -42,6 +43,7 @@ const LoginPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
           body: JSON.stringify({
             username,
             password,
@@ -54,12 +56,13 @@ const LoginPage = () => {
       if (response.ok) {
         // Login successful
         alert("Login successful!");
-        // Store the JWT token (e.g., in localStorage or cookies)
         localStorage.setItem("accessToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("isLoggedIn", "true");
 
-
+        
+        setIsLoggedIn(true);
+        console.log(isLoggedIn)
         router.push("/notespage");
       } else {
         // Handle backend errors
@@ -67,6 +70,7 @@ const LoginPage = () => {
       }
     } catch (err) {
       setError("Failed to connect to the server.");
+      console.log(err)
     }
   };
 
@@ -100,7 +104,7 @@ const LoginPage = () => {
               />
             </div>
             <div className="inputBx">
-              <input type="submit" value="Sign in" />
+              <input type="submit" value="Login" />
             </div>
           </form>
           <div className="links">

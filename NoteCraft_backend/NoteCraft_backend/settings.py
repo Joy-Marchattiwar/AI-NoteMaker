@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-t669qwbj7*+=vl0)eb@4!vzpy($ie_an-oqc@&4g75(*(eg^t1
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 AUTH_USER_MODEL = 'UserData.User'
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'UserData',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -71,10 +72,15 @@ ROOT_URLCONF = 'NoteCraft_backend.urls'
 
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),  # Token valid for 30 minutes
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),     # Refresh token valid for 1 day
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 TEMPLATES = [
     {
@@ -94,7 +100,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'NoteCraft_backend.wsgi.application'
 
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'pdf-preview-cache',
+        'TIMEOUT': 86400, 
+    }
+}
 
 
 # Cloudinary configuration
@@ -150,3 +162,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_CREDENTIALS = True  # Required for cookies
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Change to your frontend URL
+    "http://127.0.0.1:3000",
+]
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+]
+

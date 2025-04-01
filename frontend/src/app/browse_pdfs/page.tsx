@@ -19,7 +19,9 @@ const DocumentsPage = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchDocuments = async () => {
+    console.log(searchQuery)
     if (!searchQuery.trim()) return;
+    console.log(searchQuery)
     setLoading(true);
     setError(null);
     try {
@@ -30,6 +32,7 @@ const DocumentsPage = () => {
         setError("No PDFs found.");
         setDocuments([]);
       } else {
+        console.log(response.data.result);
         setDocuments(response.data.result);
       }
     } catch (err) {
@@ -79,7 +82,7 @@ const DocumentsPage = () => {
           >
             {doc.first_page_base64 ? (
               <img
-                src={`data:image/png;base64,${doc.first_page_base64}`}
+                src={`${doc.first_page_base64}`}
                 alt={doc.topic}
                 className="w-full h-40 object-cover rounded-md"
               />

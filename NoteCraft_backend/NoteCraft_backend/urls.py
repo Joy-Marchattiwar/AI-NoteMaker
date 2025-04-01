@@ -31,4 +31,6 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('search_pdfs/',ListDocumentView.as_view()),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', LogoutView.as_view(), name="logout"),
+    path('auth-status/', AuthStatusView.as_view(), name="auth-status"),
 ]

@@ -214,7 +214,18 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       const pageHeight = pdfHeight - pdfSettings.margins * 2;
       const totalPages = Math.ceil((contentHeight * scale) / pageHeight);
 
-      // Determine position for each page's content
+      const yStartFirstPage = 0; // Start from the top for the first page
+      const canvasFirstPage = await html2canvas(preparedContent, {
+        scale: 2, // Higher resolution
+        useCORS: true,
+        logging: false,
+        y: yStartFirstPage,
+        height: pageHeight / scale, // Capture only the first page's height
+        windowHeight: contentHeight,
+      });
+
+      // Convert the first page canvas to a Base64 image
+      const firstPageBase64 = canvasFirstPage.toDataURL("image/png");
       for (let page = 0; page < totalPages; page++) {
         if (page > 0) {
           pdf.addPage();
@@ -265,7 +276,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
       const formData = new FormData();
       formData.append("topic", documentName);
       formData.append("pdf_file", pdfBlob); 
-      console.log(formData)
+      formData.append("first_page", firstPageBase64);
       document.body.removeChild(preparedContent);
       console.log("Access token:", localStorage.getItem("accessToken"));
       try {

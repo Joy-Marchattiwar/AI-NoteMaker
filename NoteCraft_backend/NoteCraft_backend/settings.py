@@ -167,6 +167,7 @@ CORS_ALLOW_CREDENTIALS = True  # Required for cookies
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Change to your frontend URL
     "http://127.0.0.1:3000",
+    'https://bug-free-fortnight-ggxqrr4579v2wr79-3000.app.github.dev'
 ]
 CORS_ALLOW_HEADERS = [
     'content-type',

@@ -90,40 +90,46 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
     setEditingContent(e.target.value);
   };
 
-  // Function to apply custom styling for PDF export
   const prepareForPdfExport = () => {
-    if (!markdownRef.current) return;
-
-    // Create a clone of the content to avoid modifying the visible DOM
+    if (!markdownRef.current) return null;
+    
+    // Create a clone of the content
     const contentClone = markdownRef.current.cloneNode(true) as HTMLElement;
     const tempContainer = document.createElement("div");
     tempContainer.appendChild(contentClone);
-
+    
     // Apply PDF-specific styles
     const styleElement = document.createElement("style");
     styleElement.textContent = `
       * {
         font-family: 'Helvetica', Arial, sans-serif;
+        box-sizing: border-box;
+      }
+      body, html {
+        margin: 0;
+        padding: 0;
       }
       p, li, blockquote, table td, table th {
         line-height: ${pdfSettings.lineSpacing} !important;
         font-size: ${pdfSettings.fontSize}pt !important;
+        margin-bottom: 0.5em !important;
+        margin-top: 0.5em !important;
       }
-      h1 { font-size: ${pdfSettings.fontSize * 2}pt !important; margin-bottom: 20px !important; }
-      h2 { font-size: ${pdfSettings.fontSize * 1.5}pt !important; margin-bottom: 16px !important; }
-      h3 { font-size: ${pdfSettings.fontSize * 1.2}pt !important; margin-bottom: 14px !important; }
+      h1 { font-size: ${pdfSettings.fontSize * 2}pt !important; margin: 1em 0 0.8em !important; page-break-after: avoid !important; }
+      h2 { font-size: ${pdfSettings.fontSize * 1.5}pt !important; margin: 0.9em 0 0.7em !important; page-break-after: avoid !important; }
+      h3 { font-size: ${pdfSettings.fontSize * 1.2}pt !important; margin: 0.8em 0 0.6em !important; page-break-after: avoid !important; }
       pre, code { page-break-inside: avoid; }
       img { page-break-inside: avoid; max-width: 100%; height: auto; }
-      ul, ol { padding-left: 20px !important; }
+      ul, ol { padding-left: 20px !important; margin: 0.7em 0 !important; }
+      table { page-break-inside: avoid; }
       .page-break { page-break-after: always; height: 0; }
     `;
     tempContainer.appendChild(styleElement);
-
-    // Add page breaks before major headers if page breaks are enabled
+    
+    // Add page breaks before major headers if enabled
     if (pdfSettings.pageBreaks) {
       const headers = contentClone.querySelectorAll("h1, h2");
       headers.forEach((header, index) => {
-        // Skip the first header to avoid a page break at the beginning
         if (index > 0) {
           const pageBreakDiv = document.createElement("div");
           pageBreakDiv.className = "page-break";
@@ -131,16 +137,25 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
         }
       });
     }
+    
+    // Process images
     const images = contentClone.querySelectorAll("img");
     images.forEach((img) => {
       const originalSrc = img.getAttribute("src");
       if (originalSrc && !originalSrc.startsWith("data:")) {
-        const proxiedUrl = `http://127.0.0.1:8000/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
-        // console.log(`Rewriting image URL: ${originalSrc} -> ${proxiedUrl}`);
+        const proxiedUrl = `https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
         img.setAttribute("src", proxiedUrl);
       }
+      
+      // Set width/height attributes to avoid layout shifts during PDF generation
+      if (!img.hasAttribute("width") && img.width > 0) {
+        img.setAttribute("width", img.width.toString());
+      }
+      if (!img.hasAttribute("height") && img.height > 0) {
+        img.setAttribute("height", img.height.toString());
+      }
     });
-
+    
     return tempContainer;
   };
   async function refreshToken() {
@@ -175,62 +190,100 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
     }
   }
   const exportToPdf = async () => {
-    if (!markdownRef.current) return;
-
+    if (!markdownRef.current) return;  
     try {
       setExportLoading(true);
-
-      const documentName = prompt("Please enter the name of the document:");
-      const filename = `${documentName}-NoteCraft-${new Date().toISOString().slice(0, 10)}.pdf`;
-      // Get prepared content with improved styling and page breaks
+      let documentName = prompt("Please enter the name of the document:");
+      if (!documentName) {
+        documentName = "Untitled-Document";
+      } else {
+        documentName = documentName.replace(/[^a-zA-Z0-9-_]/g, "-");
+      }
+      
+      const timestamp = new Date().toISOString().slice(0, 10);
+      const filename = `${documentName}-NoteCraft-${timestamp}.pdf`;
+      
+      // Get prepared content with improved styling
       const preparedContent = prepareForPdfExport();
-      if (!preparedContent) return;
-
-      // Temporarily append the prepared content to the document body
+      if (!preparedContent) {
+        setExportLoading(false);
+        return;
+      }
+      
+      // Set up the temporary container for rendering
       preparedContent.style.position = "absolute";
-      preparedContent.style.top = "-9999px";
-      preparedContent.style.width = "794px"; // A4 width at 96 DPI
+      preparedContent.style.left = "-9999px";
+      preparedContent.style.top = "0";
+      preparedContent.style.width = "794px"; 
+      preparedContent.style.transformOrigin = "top left";
       document.body.appendChild(preparedContent);
-
+      
       // Create PDF (A4 size)
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
+        compress: true
       });
-
+      
       // A4 dimensions in mm
       const pdfWidth = 210;
       const pdfHeight = 297;
+      const margins = pdfSettings.margins;
       const contentWidth = preparedContent.offsetWidth;
 
-      // Calculate the scaling factor
-      const scale = (pdfWidth - pdfSettings.margins * 2) / contentWidth;
-
-      // Get the actual height of the content
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const scale = (pdfWidth - margins * 2) / contentWidth;
       const contentHeight = preparedContent.offsetHeight;
-
-      // Calculate how many pages we'll need
-      const pageHeight = pdfHeight - pdfSettings.margins * 2;
-      const totalPages = Math.ceil((contentHeight * scale) / pageHeight);
-
-      const yStartFirstPage = 0; // Start from the top for the first page
-      const canvasFirstPage = await html2canvas(preparedContent, {
-        scale: 2, // Higher resolution
-        useCORS: true,
-        logging: false,
-        y: yStartFirstPage,
-        height: pageHeight / scale, // Capture only the first page's height
-        windowHeight: contentHeight,
-      });
-
-      // Convert the first page canvas to a Base64 image
-      const firstPageBase64 = canvasFirstPage.toDataURL("image/png");
+      const usablePageHeight = pdfHeight - margins * 2;
+      
+      // Calculate how many pages we need
+      const scaledContentHeight = contentHeight * scale;
+      const totalPages = Math.ceil(scaledContentHeight / usablePageHeight);
+      
+      let firstPageBase64 = null;
+      
+      // Process each page individually for consistency
       for (let page = 0; page < totalPages; page++) {
         if (page > 0) {
           pdf.addPage();
         }
-
+        
+        // Calculate which portion of the content to capture for this page
+        const yStart = Math.floor((usablePageHeight / scale) * page);
+        const heightToCapture = Math.ceil(Math.min(
+          usablePageHeight / scale,
+          contentHeight - yStart
+        ));
+        
+        // Create canvas for this page
+        const canvas = await html2canvas(preparedContent, {
+          scale: 2, // Higher resolution for better quality
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          y: yStart,
+          height: heightToCapture,
+          windowHeight: contentHeight
+        });
+        
+        if (page === 0) {
+          firstPageBase64 = canvas.toDataURL("image/png");
+        }
+        
+        // Add the image to the PDF
+        const imgData = canvas.toDataURL("image/png");
+        pdf.addImage(
+          imgData,
+          "PNG",
+          margins,
+          margins,
+          pdfWidth - margins * 2,
+          (heightToCapture * scale),
+          undefined,
+          "FAST"
+        );
+        
         // Add page number if enabled
         if (pdfSettings.showPageNumbers) {
           pdf.setFontSize(9);
@@ -239,48 +292,24 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             `Page ${page + 1} of ${totalPages}`,
             pdfWidth / 2,
             pdfHeight - 5,
-            { align: "center" },
+            { align: "center" }
           );
         }
-
-        // Calculate which portion of the content to capture for this page
-        const yStart = (pageHeight / scale) * page;
-
-        // Create canvas for this page
-        const canvas = await html2canvas(preparedContent, {
-          scale: 2, // Higher resolution
-          useCORS: true,
-          logging: false,
-          y: yStart,
-          height: pageHeight / scale,
-          windowHeight: contentHeight,
-        });
-
-        // Add the image to the PDF
-        const imgData = canvas.toDataURL("image/png");
-        pdf.addImage(
-          imgData,
-          "PNG",
-          pdfSettings.margins,
-          pdfSettings.margins,
-          pdfWidth - pdfSettings.margins * 2,
-          0, // Let height be calculated automatically to maintain aspect ratio
-          "",
-          "FAST",
-        );
       }
-
-      console.log("pdf generated")
+      
+      // Save the PDF
       pdf.save(filename);
+      
+      // Create form data for server upload
       const pdfBlob = pdf.output("blob");
       const formData = new FormData();
       formData.append("topic", documentName);
-      formData.append("pdf_file", pdfBlob); 
+      formData.append("pdf_file", pdfBlob);
       formData.append("first_page", firstPageBase64);
       document.body.removeChild(preparedContent);
       console.log("Access token:", localStorage.getItem("accessToken"));
       try {
-        let response = await fetch("http://127.0.0.1:8000/add_pdf/", {
+        let response = await axios.post("https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/add_pdf/", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
@@ -288,7 +317,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
           body: formData,
         });
         if (response.status === 401) {
-          const responseData = await response.json();
+          const responseData = await response.data
           
           if (responseData.code === "token_not_valid") {
             // Try to refresh the token
@@ -297,7 +326,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             if (refreshed) {
               // Retry the request with the new token
               const newToken = localStorage.getItem("accessToken");
-              response = await fetch("http://127.0.0.1:8000/add_pdf/", {
+              response = await axios.post("http://127.0.0.1:8000/add_pdf/", {
                 method: "POST",
                 headers: {
                   "Authorization": `Bearer ${newToken}`,
@@ -309,11 +338,11 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             }
           }
         }
-        if (!response.ok) {
+        if (response.status!=201) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
-        const result = await response.json();
+        const result = await response.data;
         console.log("PDF uploaded successfully:", result);
       } catch (error) {
         console.error("Error uploading PDF:", error);
@@ -471,7 +500,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
             {/* PDF Settings Panel */}
             <PdfSettingsPanel />
 
-            <div className="flex justify-end">
+            <div className="flex items-center gap-2 justify-end">
               <button
                 className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-2"
                 onClick={exportToPdf}
@@ -498,10 +527,20 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = ({
                 )}
               </button>
               <button
-                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 ml-2"
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
                 onClick={handleEdit}
               >
-                Edit Document
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                  />
+                </svg>
+                <span>Edit Document</span>
               </button>
             </div>
           </div>

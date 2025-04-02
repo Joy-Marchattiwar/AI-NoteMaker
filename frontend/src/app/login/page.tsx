@@ -4,6 +4,9 @@ import "./styles.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../contexts/AuthContext";
+import axios from "axios";
+import { toast} from "sonner";
+
 const LoginPage = () => {
   const { isLoggedIn,setIsLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
@@ -12,7 +15,6 @@ const LoginPage = () => {
   });
 
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
 
   // Handle input changes
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
@@ -30,47 +32,43 @@ const LoginPage = () => {
     const { username, password } = formData;
 
     if (!username || !password) {
-      setError("All fields are required.");
-      return;
+      toast.error("All fields are required.");
     }
 
     try {
       // Send a POST request to the backend API
-      const response = await fetch(
-        "http://127.0.0.1:8000/login/",
+      const response = await axios.post(
+        "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/login/",
         {
-          method: "POST",
+          username,
+          password,
+        },
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include",
-          body: JSON.stringify({
-            username,
-            password,
-          }),
-        },
+          withCredentials: true, 
+        }
       );
+      
+      const data = await response.data;
 
-      const data = await response.json();
-
-      if (response.ok) {
-        // Login successful
-        alert("Login successful!");
+      if (response.status==200) {
         localStorage.setItem("accessToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
         localStorage.setItem("isLoggedIn", "true");
 
-        
+        toast.success("Logged in")
         setIsLoggedIn(true);
-        console.log(isLoggedIn)
-        router.push("/notespage");
+        router.push("/");
       } else {
-        // Handle backend errors
-        setError(data.message || "Invalid username or password.");
+        toast.error("Error Occured")
       }
     } catch (err) {
-      setError("Failed to connect to the server.");
+      toast.error("Unable to connect to server")
       console.log(err)
+    }
+    finally{
     }
   };
 
@@ -83,7 +81,6 @@ const LoginPage = () => {
 
         <div className="login">
           <h2>Login</h2>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <form onSubmit={handleSubmit}>
             <div className="inputBx">
               <input

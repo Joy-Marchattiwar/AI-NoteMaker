@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.views import APIView
 from typing import Dict
-from .myutils import request_OpenRouter,google_search_image,get_context,topics_query
+from .myutils import request_OpenRouter,google_search_image,get_context,topics_query,new_image
 from requests.exceptions import RequestException
 import requests
 from django.http import HttpResponse
@@ -16,7 +16,7 @@ class HelloWorldView(APIView):
 
 class GenerateNoteView(APIView):
     def post(self, request:Request)->Response:
-        params = request.data.get("params", {})
+        params = request.data.get("params", {}) # type: ignore
 
         if not isinstance(params, dict):
             return Response({"error": "params must be a dictionary"}, status=400)
@@ -41,7 +41,7 @@ class GenerateNoteView(APIView):
         prompt:str= "Objective: Act as an expert academic note-taking assistant. " \
         f"Generate comprehensive, well-structured notes on {fresponse['topics']}\
         InstructionsStructure: Organize notes hierarchically with headings, subheadings and keep theword count high,\
-        Focus on clarity, accuracy, and relevance \
+        Focus on clarity, accuracy, and relevance do not add double new line or meta text ever\
         to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
         example- &&&image:(diagram of the human eye)&&& use 2-3 images per heading at max\
         output should be in ```text box\
@@ -84,7 +84,7 @@ class GenerateNoteView(APIView):
 
 class ModifyTextView(APIView):
     def post(self,request:Request)->Response:
-        change_text:str=request.data.get("text")
+        change_text:str=request.data.get("text") # type: ignore
         print(change_text)
         try:
             response:str=request_OpenRouter(change_text+"rework this part of text to get more clarity and elaborate the ouput should be in ```text box the new content should not be more than 3 times original lenght")
@@ -97,9 +97,9 @@ class ModifyTextView(APIView):
 
 class ModifyImageView(APIView):
     def post(self,request:Request)->Response:
-        change_image:str=request.data.get("imgText")
+        change_image:str=request.data.get("imgText") # type: ignore
         try:
-            new_image_url:str=google_search_image(change_image)
+            new_image_url:str=new_image(change_image)
             return Response({"message": "Image modified successfully","modifiedContent": f"![{change_image}]({new_image_url})"})
         except (TypeError,RequestException) as e:
             return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)

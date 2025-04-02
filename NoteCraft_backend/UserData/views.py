@@ -151,6 +151,6 @@ class AuthStatusView(APIView):
 
     def get(self, request):
         try:
-            return Response({"loggedIn": True})
+            return Response({"loggedIn": True},status=status.HTTP_200_OK)
         except AuthenticationFailed:
-            return Response({"loggedIn": False}, status=401)
+            return Response({"loggedIn": False}, status=status.HTTP_401_UNAUTHORIZED)

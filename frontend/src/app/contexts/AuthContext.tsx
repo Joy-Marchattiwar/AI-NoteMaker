@@ -1,4 +1,5 @@
 // AuthContext.tsx
+import axios from "axios";
 import { createContext, useState, useEffect } from "react";
 interface AuthContextType {
     isLoggedIn: boolean;
@@ -23,15 +24,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
       }
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/auth-status/", {
+        const response = await axios.get("https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/auth-status/", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-          credentials: "include",
+          withCredentials: true
         });
         console.log(response)
-        if (response.ok) {
+        if (response.status==200) {
           setIsLoggedIn(true);
         } else {
           setIsLoggedIn(false);

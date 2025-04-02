@@ -6,6 +6,7 @@ import "./styles.css";
 import res from "./temp.json";
 import MarkdownDocument from "@/components/EditableDocument";
 import "katex/dist/katex.min.css";
+import { toast } from "sonner";
 
 const Page = () => {
   const [result, setResults] = useState<{
@@ -31,18 +32,20 @@ const Page = () => {
     if (!query) return;
     try {
       setLoading(true);
-      // const response = await axios.post(
-      //   `http://127.0.0.1:8000/generate_note/`,
-      //   {
-      //     params: { query: query },
-      //   },
-      // );
-      // console.log(response.data);
-      // setResults(response.data);
-      setResults(res);
-      setLoading(false);
+      const response = await axios.post(
+        `https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/generate_note/`,
+        {
+          params: { query: query },
+        },
+      );
+      setResults(response.data);
+      // setTimeout(() => {
+      //   setResults(res);
+      //   setLoading(false);
+      // }, 5000);
+      setLoading(false)
     } catch (error) {
-      console.error("Error fetching data:", error);
+      toast.error("Error occured while fetching notes please retry")
       setLoading(false);
     }
   };
@@ -66,9 +69,9 @@ const Page = () => {
   };
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-4xl font-bold mt-12">Build Notes</h1>
+      <h1 className="text-4xl font-bold mt-12 mb-5">Build Notes</h1>
       <SearchBar onSearch={handleSearch} />
-      {loading && <div className="loader"></div>}
+      {loading && <div className="loader mt-2"></div>}
 
       {result.notes && (
         <div className="w-full max-w-4xl mt-8">

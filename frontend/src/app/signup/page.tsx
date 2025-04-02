@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "../login/styles.css"; // Ensure this CSS file exists in the correct path
 import Link from "next/link";
+import axios from "axios";
+import { toast } from "sonner";
 
 const SignupPage = () => {
   // State for form fields
@@ -11,10 +13,7 @@ const SignupPage = () => {
     confirmPassword: "",
   });
 
-  // State for error messages
-  const [error, setError] = useState("");
 
-  // Handle input changes
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -31,40 +30,36 @@ const SignupPage = () => {
 
     // Basic validation
     if (!username || !password || !confirmPassword) {
-      setError("All fields are required.");
+      toast.warning("All fields are required.");
       return;
     }
 
     try {
-      // Send a POST request to the backend API
-      const response = await fetch(
-        "http://127.0.0.1:8000/signup/",
+      const response = await axios.post(
+        "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/signup/",
         {
-          method: "POST",
+          username,
+          password,
+          confirm_password: confirmPassword,
+        } ,
+        {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            username,
-            password,
-            "confirm_password":confirmPassword
-          }),
-        },
+        }
       );
 
-      const data = await response.json();
+      const data = await response.data;
 
-      if (response.ok) {
-        // Registration successful
-        alert("User registered successfully!");
-        // Optionally redirect to the login page
+      if (response.status==201) {
+        toast.success("Signed Up")
         window.location.href = "/login";
       } else {
         // Handle backend errors
-        setError(data.message || "An error occurred during registration.");
+        toast.error("An error occurred during registration.");
       }
     } catch (err) {
-      setError("Failed to connect to the server.");
+      toast.error("Failed to connect to the server.");
     }
   };
 
@@ -77,7 +72,6 @@ const SignupPage = () => {
 
         <div className="login">
           <h2>Sign Up</h2>
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           <form onSubmit={handleSubmit}>
             <div className="inputBx">
               <input

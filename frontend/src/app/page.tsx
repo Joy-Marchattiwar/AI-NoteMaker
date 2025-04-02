@@ -1,49 +1,16 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useContext, useEffect, useState } from "react";
+import { useContext} from "react";
 import { AuthContext } from "./contexts/AuthContext";
 
 export default function Page() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
-  // Check authentication status on component mount
-  // useEffect(() => {
-  //   const checkAuthStatus = async () => {
-  //     try {
-  //       const accessToken = localStorage.getItem("accessToken");
-  //       if (!accessToken) {
-  //         setIsLoggedIn(false);
-  //         return;
-  //       }
-
-  //       const response = await fetch("http://127.0.0.1:8000/auth-status/", {
-  //         method: "GET",
-  //         headers: {
-  //           Authorization: `Bearer ${accessToken}`,
-  //         },
-  //         credentials: "include",
-  //       });
-
-  //       if (response.ok) {
-  //         setIsLoggedIn(true);
-  //       } else {
-  //         setIsLoggedIn(false);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error checking auth status:", error);
-  //       setIsLoggedIn(false);
-  //     }
-  //   };
-
-  //   checkAuthStatus();
-  // }, []); // Run only once on component mount
-
   const destination = isLoggedIn ? "/notespage" : "/login";
   const destination2 = isLoggedIn ? "/browse_pdfs" : "/login";
 
   return (
-    <div className="full-page-bg">
       <div className="flex min-h-screen flex-col">
         <main className="flex-1">
           <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -106,6 +73,5 @@ export default function Page() {
           </section>
         </main>
       </div>
-    </div>
   );
 }

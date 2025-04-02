@@ -63,10 +63,10 @@ def get_context(topic:str,namespace:str)->Dict:
                 top_k=3,
                 include_metadata=True
             )
-        if results.matches:
+        if results.matches: # type: ignore
                 # Fetch relevant documents from Pinecone
                 relevant_docs = [
-                    match.metadata["text"] for match in results.matches
+                    match.metadata["text"] for match in results.matches # type: ignore
                 ]
                 return {"message": "Relevant documents found", "documents": relevant_docs}
         else:

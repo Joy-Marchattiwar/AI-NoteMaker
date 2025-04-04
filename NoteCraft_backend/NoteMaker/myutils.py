@@ -77,20 +77,11 @@ def get_context(topic:str,namespace:str)->Dict:
 
 
 def google_search_image(query: str) -> str:
-    """Fetches the first image result for a given query using Google Images Search API."""
-    cache_key = f"image_url_{query}"
-
-    # Check cache first
-    cached_url = cache.get(cache_key)
-    if cached_url:
-        return cached_url
 
     try:
         gis.search(search_params={'q': query, 'num': 1})
         image_url = gis.results()[0].url if gis.results() else "https://via.placeholder.com/150"
 
-        # Store in cache for future use (optional: set expiry)
-        cache.set(cache_key, image_url, timeout=86400)  # Cache for 1 day
         return image_url
     except (IndexError, RequestException):
         return "https://via.placeholder.com/150"

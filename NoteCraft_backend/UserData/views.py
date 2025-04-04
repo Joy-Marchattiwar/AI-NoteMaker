@@ -69,17 +69,16 @@ class DocumentUploadView(APIView):
             return Response({'error': 'Both topic and PDF file are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Upload the file to Cloudinary
-            # upload_result = cloudinary.uploader.upload(
-            #     pdf_file,
-            #     resource_type="raw",  
-            #     folder="documents"   
-            # )
+            upload_result = cloudinary.uploader.upload(
+                pdf_file,
+                resource_type="raw",  
+                folder="documents"   
+            )
 
             document = Document.objects.create(
                 id=uuid.uuid4(),
                 topic=topic,
-                pdf_public_id="temp url",#upload_result['secure_url'],  
+                pdf_public_id=upload_result['secure_url'],  
                 uploaded_by=request.user,
                 first_page=img
             )

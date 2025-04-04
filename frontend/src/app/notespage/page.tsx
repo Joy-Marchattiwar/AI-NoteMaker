@@ -17,17 +17,7 @@ const Page = () => {
     notes: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const notesRef = useRef<HTMLDivElement>(null);
 
-  // Add useEffect to scroll when notes are loaded
-  useEffect(() => {
-    if (result.notes && !loading && notesRef.current) {
-      notesRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [result.notes, loading]);
   const handleSearch = async (query: string) => {
     if (!query) return;
     try {
@@ -43,6 +33,7 @@ const Page = () => {
       //   setResults(res);
       //   setLoading(false);
       // }, 5000);
+      console.log(response);
       setLoading(false)
     } catch (error) {
       toast.error("Error occured while fetching notes please retry")
@@ -85,4 +76,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default React.memo(Page);

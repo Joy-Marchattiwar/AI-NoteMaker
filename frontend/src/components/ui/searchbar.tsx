@@ -5,7 +5,7 @@ interface SearchBarProps {
   onSearch: (query: string) => void; // Callback function to return the search value
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+const SearchBar: React.FC<SearchBarProps> = React.memo(({ onSearch }) => {
   const [query, setQuery] = useState<string>("");
 
   const handleSearch = (event: React.FormEvent) => {
@@ -45,9 +45,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </button>
-
     </form>
   );
-};
+});
 
 export default SearchBar;

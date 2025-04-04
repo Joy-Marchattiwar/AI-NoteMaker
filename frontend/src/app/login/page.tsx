@@ -1,12 +1,11 @@
 "use client"
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import "./styles.css"; 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "../contexts/AuthContext";
 import axios from "axios";
 import { toast} from "sonner";
-
 const LoginPage = () => {
   const { isLoggedIn,setIsLoggedIn } = useContext(AuthContext);
   const [formData, setFormData] = useState({
@@ -117,4 +116,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default React.memo(LoginPage);

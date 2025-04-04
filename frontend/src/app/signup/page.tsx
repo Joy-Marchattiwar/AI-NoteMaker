@@ -6,7 +6,7 @@ import axios from "axios";
 import { toast } from "sonner";
 
 const SignupPage = () => {
-  // State for form fields
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -117,4 +117,4 @@ const SignupPage = () => {
   );
 };
 
-export default SignupPage;
+export default React.memo(SignupPage);

@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { useContext} from "react";
 import { AuthContext } from "./contexts/AuthContext";
 import { FileUpload } from "@/components/ui/file-upload";
+import axios from "axios";
+import { toast } from "sonner";
 
 export default function Page() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,7 +13,21 @@ export default function Page() {
   const destination = isLoggedIn ? "/notespage" : "/login";
   const destination2 = isLoggedIn ? "/browse_pdfs" : "/login";
   const handleUpload = async (data:FormData) => {
-    console.log("Files to upload:", data);
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await axios.post("https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/add_pdf/", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`,
+        },
+        withCredentials: true
+      });
+      if (response.status === 201) {
+        toast.success("File uploaded successfully");
+      }
+    } catch (error) {
+      toast.error("Error uploading file");
+    }
 
   }
 

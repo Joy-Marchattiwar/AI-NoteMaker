@@ -130,7 +130,6 @@ export const exportToPdf = async (
     const scaledContentHeight = contentHeight * scale;
     const totalPages = Math.ceil(scaledContentHeight / usablePageHeight);
     
-    let firstPageBase64 = null;
     
     // Process each page individually for consistency
     for (let page = 0; page < totalPages; page++) {
@@ -156,9 +155,7 @@ export const exportToPdf = async (
         windowHeight: contentHeight
       });
       
-      if (page === 0) {
-        firstPageBase64 = canvas.toDataURL("image/png");
-      }
+      
       
       // Add the image to the PDF
       const imgData = canvas.toDataURL("image/png");
@@ -192,9 +189,8 @@ export const exportToPdf = async (
     // Create form data for server upload
     const pdfBlob = pdf.output("blob");
     const formData = new FormData();
-    formData.append("topic", documentName);
-    formData.append("pdf_file", pdfBlob);
-    formData.append("first_page", firstPageBase64?? "");
+    formData.append(filename, pdfBlob);
+
     document.body.removeChild(preparedContent);
 
     try {

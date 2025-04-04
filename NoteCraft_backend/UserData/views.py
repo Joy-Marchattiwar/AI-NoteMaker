@@ -19,6 +19,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import TokenError,AuthenticationFailed
+import fitz
+from django.core.files.uploadedfile import InMemoryUploadedFile
 load_dotenv()
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_NAME'),
@@ -29,66 +31,46 @@ cloudinary.config(
 config = cloudinary.config(secure=True)
 
 
-def get_first_page_as_base64(pdf_public_id: str) -> str | None:
-    cache_key = f"pdf_preview_{pdf_public_id}"
-    cached_result = cache.get(cache_key)
-    
-    if cached_result:
-        print("Cache hit")
-        return cached_result
-    image_url, _ = cloudinary_url(
-        pdf_public_id,
-        resource_type="image",
-        transformation=[
-            {"pg": 1, "width": 300, "height": 400, "crop": "scale","format":"jpg"  }
-        ],
-        
-    )
-    print("Generated URL:", image_url)
-    response = requests.get(image_url)
-    print("Response status:", response.status_code)
-    if response.status_code == 200:
-        base64_str=base64.b64encode(response.content).decode("utf-8")
-        # cache.set(cache_key, base64_str)
-        return base64_str
-        
-    return None
-
+def get_first_page_as_base64(pdf:InMemoryUploadedFile)->str:
+    doc=fitz.open(stream=pdf.read(),filetype="pdf")
+    page=doc[0]
+    pix=page.get_pixmap().tobytes("png") # type: ignore
+    return base64.b64encode(pix).decode("utf-8")
 
 class DocumentUploadView(APIView):
     parser_classes = [MultiPartParser]
     permission_classes = [IsAuthenticated]
 
     def post(self, request:Request)->Response:
-        # Get the uploaded file from the request
-        pdf_file = request.FILES.get('pdf_file') # type: ignore
-        topic = request.data.get('topic','untitled') # type: ignore
-        img=request.data.get("first_page") # type: ignore
+        if not request.FILES:
+            return Response({"error":"No files found"},status=status.HTTP_400_BAD_REQUEST)
+        name:str
+        file:InMemoryUploadedFile
+        for name, file in request.FILES.items(): # type: ignore
+            print(name,file)
+            img=get_first_page_as_base64(file)
+            try:
+                file.seek(0)
+                upload_result = cloudinary.uploader.upload(
+                    file=file.read(),
+                    resource_type="raw",  
+                    folder="documents"   
+                )
+                document = Document.objects.create(
+                    id=uuid.uuid4(),
+                    topic=name,
+                    pdf_public_id=upload_result['secure_url'],  
+                    uploaded_by=request.user,
+                    first_page=img
+                )
+                serializer= DocumentSerializer(document)
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        if not pdf_file or not topic or not img:
-            return Response({'error': 'Both topic and PDF file are required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        try:
-            upload_result = cloudinary.uploader.upload(
-                pdf_file,
-                resource_type="raw",  
-                folder="documents"   
-            )
 
-            document = Document.objects.create(
-                id=uuid.uuid4(),
-                topic=topic,
-                pdf_public_id=upload_result['secure_url'],  
-                uploaded_by=request.user,
-                first_page=img
-            )
-
-            # Serialize and return the response
-            serializer = DocumentSerializer(document)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"message":"File uploaded successfully"},status=status.HTTP_200_OK)
 
 class SignupView(APIView):
     def post(self, request:Request)->Response:

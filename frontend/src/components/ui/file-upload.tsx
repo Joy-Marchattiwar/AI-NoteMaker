@@ -64,16 +64,14 @@ export const FileUpload = ({
       // Create FormData to send files to backend
       const formData = new FormData();
       files.forEach((file, index) => {
-        formData.append(`file-${index}`, file);
+        formData.append(`${file.name}-${index}`, file);
       });
       
       // Call the provided onSubmit function with the files
       onSubmit && onSubmit(formData);
-      toast.success("Files submitted successfully!");
       setFiles([]);
     } catch (error) {
       console.error('Error submitting files:', error);
-      toast.error(`Error submitting files. Please try again`);
     } finally {
       setSubmitting(false);
     }

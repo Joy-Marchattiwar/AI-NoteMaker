@@ -3,12 +3,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useContext} from "react";
 import { AuthContext } from "./contexts/AuthContext";
+import { FileUpload } from "@/components/ui/file-upload";
 
 export default function Page() {
   // const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
   const destination = isLoggedIn ? "/notespage" : "/login";
   const destination2 = isLoggedIn ? "/browse_pdfs" : "/login";
+  const handleUpload = async (data:FormData) => {
+    console.log("Files to upload:", data);
+
+  }
 
   return (
       <div className="flex min-h-screen flex-col">
@@ -69,6 +74,10 @@ export default function Page() {
                   </div>
                 </div>
               </div>
+              {isLoggedIn && <FileUpload 
+                onChange={(files) => console.log('Files changed:', files)} 
+                onSubmit={handleUpload} 
+              />}
             </div>
           </section>
         </main>

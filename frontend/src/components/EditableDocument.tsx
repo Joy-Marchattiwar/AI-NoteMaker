@@ -1,4 +1,3 @@
-// MarkdownDocument.tsx
 import React, { useState, useRef, useCallback, useMemo } from "react";
 import "katex/dist/katex.min.css";
 import { PdfSettingsPanel } from "./PdfSettingsPanel";
@@ -7,21 +6,29 @@ import { DocumentViewer } from "./DocumentViewer";
 import { exportToPdf } from "../utils/pdfExport";
 import { modifyContent } from "../utils/contentModifier";
 import { refreshToken } from "../utils/auth";
+import { Dialog, DialogTitle, DialogContent, DialogTrigger, DialogHeader, DialogDescription, DialogFooter } from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Label } from "@/components/ui/label"
 
 interface MarkdownDocumentProps {
   markdown: string;
   onSave?: (updatedMarkdown: string) => void;
+  name: string
 }
 
 const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
   markdown,
   onSave,
+  name
 }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingContent, setEditingContent] = useState<string>(markdown);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const markdownRef = useRef<HTMLDivElement | null>(null);
   const [exportLoading, setExportLoading] = useState<boolean>(false);
+  const [documentName, setDocumentName] = useState<string>(name);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [pdfSettings, setPdfSettings] = useState({
     lineSpacing: 1.5,
     pageBreaks: true,
@@ -50,7 +57,6 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
   const handleChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setEditingContent(e.target.value);
   }, []);
-
 
   const handleModify = useCallback(async () => {
     if (!textareaRef.current) return;
@@ -84,11 +90,11 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
     }
   }, []);
 
-  const handleExportToPdf = useCallback(async () => {
+  const handleExportToPdf = useCallback(async (docName: string) => {
     if (!markdownRef.current) return;
     try {
       setExportLoading(true);
-      await exportToPdf(markdownRef.current, pdfSettings, refreshToken);
+      await exportToPdf(markdownRef.current, pdfSettings, refreshToken, docName);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {
@@ -96,7 +102,12 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
     }
   }, [pdfSettings]);
 
-  // Use memoized components to prevent unnecessary re-renders
+
+  const handleDialogSubmit = useCallback(async () => {
+    setDialogOpen(false);
+    await handleExportToPdf(documentName);
+  }, [documentName, handleExportToPdf]);
+
   const editorComponent = useMemo(() => (
     <Editor
       textareaRef={textareaRef} 
@@ -116,32 +127,59 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
           onSettingsChange={setPdfSettings} 
         />
         <div className="flex items-center gap-2 justify-end">
-          <button
-            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-2"
-            onClick={handleExportToPdf}
-            disabled={exportLoading}
-          >
-            {exportLoading ? (
-              <span>Exporting...</span>
-            ) : (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
-                    clipRule="evenodd"
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <button
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 flex items-center gap-2"
+                disabled={exportLoading}
+              >
+                {exportLoading ? (
+                  <span>Exporting...</span>
+                ) : (
+                  <>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <span>Export as PDF</span>
+                  </>
+                )}
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Please enter Document name</DialogTitle>
+                <DialogDescription>
+                  Name should be related to the content of the document. Keep it short and descriptive.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input 
+                    id="name" 
+                    className="col-span-3" 
+                    value={documentName} 
+                    onChange={(e) => setDocumentName(e.target.value)}
                   />
-                </svg>
-                <span>Export as PDF</span>
-              </>
-            )}
-          </button>
-          <button
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleDialogSubmit}>Submit</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Button
             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 flex items-center gap-2"
             onClick={handleEdit}
           >
@@ -156,7 +194,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
               />
             </svg>
             <span>Edit Document</span>
-          </button>
+          </Button>
         </div>
       </div>
       <DocumentViewer 
@@ -164,7 +202,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
         markdown={markdown} 
       />
     </>
-  ), [markdown, pdfSettings, exportLoading, handleExportToPdf, handleEdit]);
+  ), [markdown, pdfSettings, exportLoading, handleEdit, dialogOpen, documentName, handleDialogSubmit]);
 
   return (
     <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-lg shadow-md">

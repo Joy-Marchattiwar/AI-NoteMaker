@@ -54,19 +54,6 @@ class GenerateNoteView(APIView):
         except (TypeError,RequestException) as e:
             return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # images_prompt:str="taking these notes and add images to make them more engaging and visually appealing.\
-        # to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
-        # example- &&&image:(diagram of the human eye)&&&\
-        # the image should be google searchable keep notes as it is or add anything relevent to images\
-        # output should be in ```text box"
-
-        # try:
-        #     imaged_notes=request_OpenRouter(notes+images_prompt)
-        #     start = imaged_notes.find("```text") + len("```text")
-        #     end = imaged_notes.find("```", start)
-        #     imaged_notes=imaged_notes[start:end].strip()
-        # except (TypeError,RequestException) as e:
-        #     return Response({"message": "Error in response from OpenRouter","error": str(e)},status=500)
 
         arr=notes.split("&&&")
         processed_notes = []

@@ -1,5 +1,5 @@
 "use client"
-import React, { useCallback, useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./styles.css"; 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,7 +14,13 @@ const LoginPage = () => {
   });
 
   const router = useRouter();
-
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.replace("/");
+      document.body.style.overflow = "auto";
+    }
+  }, [isLoggedIn, router]);
+  
   // Handle input changes
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,7 +65,6 @@ const LoginPage = () => {
 
         toast.success("Logged in")
         setIsLoggedIn(true);
-        router.push("/");
       } else {
         toast.error("Error Occured")
       }

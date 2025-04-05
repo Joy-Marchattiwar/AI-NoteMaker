@@ -70,7 +70,7 @@ const DocumentsPage = () => {
           >
             {doc.first_page_base64 ? (
               <img
-                src={`${doc.first_page_base64}`}
+                src={`data:image/png;base64,${doc.first_page_base64}`}
                 alt={doc.topic}
                 className="w-full h-40 object-cover rounded-md"
               />

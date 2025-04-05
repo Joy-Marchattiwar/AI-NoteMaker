@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import logo from "./images/manual.png"
 import axios from "axios";
 import { toast, Toaster } from "sonner";
+import { Github, Globe, Linkedin } from "lucide-react";
 export default function RootLayout({
   children,
 }: {
@@ -42,7 +43,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     const storedLoginState = localStorage.getItem("isLoggedIn");
     const accessToken = localStorage.getItem("accessToken");
     
-    if ((storedLoginState === "true" || storedLoginState === true) && accessToken) {
+    if (storedLoginState === "true" && accessToken) {
       setIsLoggedIn(true);
     }
   }, [setIsLoggedIn]);
@@ -93,7 +94,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
           <div className="container flex h-16 items-center justify-between py-4">
             <div className="flex items-center gap-2">
               <Link href="/" className="flex items-center gap-2">
-              <img src={logo.src} className="h-6 w-6"></img>
+              <img src={logo.src} className="h-6 w-6 ml-5"></img>
                 <span className="text-xl font-bold">Notecraft</span>
               </Link>
             </div>
@@ -125,32 +126,37 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         <footer className="border-t bg-muted relative">
           <div className="container flex flex-col gap-6 py-8 md:flex-row md:items-center md:justify-between md:py-12">
             <div className="flex items-center gap-2">
-            <img src={logo.src} className="h-6 w-6"></img>
+            <img src={logo.src} className="h-6 w-6 ml-5"></img>
               <span className="text-lg font-bold">Notecraft</span>
             </div>
             <nav className="flex gap-4 sm:gap-6">
               <Link
-                href="#"
-                className="text-sm font-medium hover:underline underline-offset-4"
+                href="https://github.com/ShlokArora2709"
+                className="text-sm font-medium hover:underline underline-offset-4 flex items-center gap-2"
+                target="_blank"
               >
-                Terms
+                <Github className="w-4 h-4" />
+                Github
               </Link>
               <Link
-                href="#"
-                className="text-sm font-medium hover:underline underline-offset-4"
+                href="shlokarora2709.github.io/"
+                className="text-sm font-medium hover:underline underline-offset-4 flex items-center gap-2"
+                target="_blank"
               >
-                Privacy
+                <Globe className="w-4 h-4" />
+                Portfolio
               </Link>
               <Link
-                href="#"
-                className="text-sm font-medium hover:underline underline-offset-4"
+                href="https://www.linkedin.com/in/shlok-arora-091250269"
+                className="text-sm font-medium hover:underline underline-offset-4 flex items-center gap-2"
+                target="_blank"
               >
-                Contact
+                <Linkedin className="w-4 h-4" />
+                Linkedin
               </Link>
             </nav>
             <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Notecraft. All rights
-              reserved.
+              Thank you for using Notecraft!
             </p>
           </div>
         </footer>

@@ -7,6 +7,7 @@ import res from "./temp.json";
 import MarkdownDocument from "@/components/EditableDocument";
 import "katex/dist/katex.min.css";
 import { toast } from "sonner";
+import { set } from "lodash";
 
 const Page = () => {
   const [result, setResults] = useState<{
@@ -16,10 +17,12 @@ const Page = () => {
     message: "",
     notes: "",
   });
+  const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSearch = async (query: string) => {
     if (!query) return;
+    setQuery(query);
     try {
       setLoading(true);
       const response = await axios.post(
@@ -33,8 +36,7 @@ const Page = () => {
       //   setResults(res);
       //   setLoading(false);
       // }, 5000);
-      console.log(response);
-      setLoading(false)
+      setLoading(false);
     } catch (error) {
       toast.error("Error occured while fetching notes please retry")
       setLoading(false);
@@ -69,6 +71,7 @@ const Page = () => {
           <MarkdownDocument
             markdown={replaceMathDelimiters(result.notes)}
             onSave={handleSaveMarkdown}
+            name={query}
           />
         </div>
       )}

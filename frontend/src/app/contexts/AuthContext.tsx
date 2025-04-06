@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
       }
 
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth-status/`, {
+        const response = await axios.get(`https://notecraft-backend-ag98.onrender.com/auth-status/`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,

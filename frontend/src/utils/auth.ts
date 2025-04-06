@@ -1,6 +1,6 @@
 export const refreshToken = async (): Promise<boolean> => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/refresh/`, {
+      const response = await fetch(`https://notecraft-backend-ag98.onrender.com/token/refresh/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

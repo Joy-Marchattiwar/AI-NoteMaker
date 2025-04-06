@@ -40,10 +40,9 @@ const LoginPage = () => {
       toast.error("All fields are required.");
     }
 
-    try {
-      console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/login/`)
+    try { 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/login/`,
+        `https://notecraft-backend-ag98.onrender.com/api/login/`,
         {
           username,
           password,

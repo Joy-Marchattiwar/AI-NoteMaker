@@ -95,7 +95,7 @@ export const prepareForPdfExport = (element: HTMLElement, pdfSettings: PdfSettin
       (window._processedImageCache ?? new Map()).set(imgId, true);
       
       if (originalSrc && !originalSrc.startsWith("data:")) {
-        const proxiedUrl = `${process.env.NEXT_PUBLIC_API_URL}/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
+        const proxiedUrl = `https://notecraft-backend-ag98.onrender.com/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
         img.setAttribute("src", proxiedUrl);
       }
       

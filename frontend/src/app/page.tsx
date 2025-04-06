@@ -15,7 +15,7 @@ export default function Page() {
   const handleUpload = async (data:FormData) => {
     try {
       const token = localStorage.getItem("accessToken");
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/add_pdf/`, data, {
+      const response = await axios.post(`https://notecraft-backend-ag98.onrender.com/add_pdf/`, data, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`,

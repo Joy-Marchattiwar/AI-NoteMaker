@@ -26,7 +26,7 @@ const Page = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/generate_note/`,
+        `https://notecraft-backend-ag98.onrender.com/generate_note/`,
         {
           params: { query: query },
         },

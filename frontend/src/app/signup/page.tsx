@@ -36,7 +36,7 @@ const SignupPage = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/signup/`,
+        `https://notecraft-backend-ag98.onrender.com/api/signup/`,
         {
           username,
           password,

@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('FRONTEND_URL')]
+ALLOWED_HOSTS = ['https://notecraft-zi3w.onrender.com']
 
 
 AUTH_USER_MODEL = 'UserData.User'

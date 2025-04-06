@@ -7,7 +7,7 @@ import res from "./temp.json";
 import MarkdownDocument from "@/components/EditableDocument";
 import "katex/dist/katex.min.css";
 import { toast } from "sonner";
-import { set } from "lodash";
+
 
 const Page = () => {
   const [result, setResults] = useState<{
@@ -26,7 +26,7 @@ const Page = () => {
     try {
       setLoading(true);
       const response = await axios.post(
-        `https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/generate_note/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/generate_note/`,
         {
           params: { query: query },
         },

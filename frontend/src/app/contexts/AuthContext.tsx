@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode}) => {
       }
 
       try {
-        const response = await axios.get("https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/auth-status/", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth-status/`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${accessToken}`,

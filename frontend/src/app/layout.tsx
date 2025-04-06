@@ -59,7 +59,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       }
 
       const response = await axios.post(
-        "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/logout/",
+        `${process.env.NEXT_PUBLIC_API_URL}/logout/`,
         { refresh: refreshToken },
         {
           headers: {

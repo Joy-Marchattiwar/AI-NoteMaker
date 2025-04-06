@@ -9,9 +9,7 @@ interface NameDialogProps {
   }
 export default function NameDialog({ open, onOpenChange, onSubmit }: NameDialogProps) {
     const [name, setName] = React.useState("");
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-    };
+
     const handleSubmit = () => {
         onSubmit(name);
         setName(""); 

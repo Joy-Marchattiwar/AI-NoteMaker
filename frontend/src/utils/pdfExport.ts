@@ -95,7 +95,7 @@ export const prepareForPdfExport = (element: HTMLElement, pdfSettings: PdfSettin
       (window._processedImageCache ?? new Map()).set(imgId, true);
       
       if (originalSrc && !originalSrc.startsWith("data:")) {
-        const proxiedUrl = `https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
+        const proxiedUrl = `${process.env.NEXT_PUBLIC_API_URL}/proxy-image/?url=${encodeURIComponent(originalSrc)}`;
         img.setAttribute("src", proxiedUrl);
       }
       
@@ -336,7 +336,7 @@ async function waitForImagesToLoad(element: { getElementsByTagName: (arg0: strin
 const uploadPdf = async (formData: FormData, refreshTokenFn: () => Promise<boolean>) => {
   try {
     let response = await axios.post(
-      "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/add_pdf/", 
+      "/add_pdf/", 
       formData,
       {
         headers: {
@@ -353,7 +353,7 @@ const uploadPdf = async (formData: FormData, refreshTokenFn: () => Promise<boole
       if (refreshed) {
         // Retry the request with the new token
         response = await axios.post(
-          "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/add_pdf/", 
+          "/add_pdf/", 
           formData,
           {
             headers: {

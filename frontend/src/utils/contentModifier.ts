@@ -9,11 +9,11 @@ export const modifyContent = async (selectedText: string): Promise<string | null
     if (isImageMarkdown) {
       const matches = selectedText.match(imageRegex);
       const altText = matches ? matches[1] : "";
-      response = await axios.post("http://127.0.0.1:8000/modify_image/", {
+      response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/modify_image/`, {
         imgText: altText,
       });
     } else {
-      response = await axios.post("http://127.0.0.1:8000/modify_text/", {
+      response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/modify_text/`, {
         text: selectedText,
       });
     }

@@ -43,7 +43,7 @@ const LoginPage = () => {
     try {
       // Send a POST request to the backend API
       const response = await axios.post(
-        "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/login/",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/login/`,
         {
           username,
           password,

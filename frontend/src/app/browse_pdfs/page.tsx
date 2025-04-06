@@ -26,7 +26,7 @@ const DocumentsPage = () => {
 
     try {
       const response = await axios.get(
-        `https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/search_pdfs/?topic=${query}`
+        `${process.env.NEXT_PUBLIC_API_URL}/search_pdfs/?topic=${query}`
       );
       
       if (response.status === 204) {

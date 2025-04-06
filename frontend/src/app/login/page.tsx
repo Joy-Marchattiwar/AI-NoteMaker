@@ -41,7 +41,7 @@ const LoginPage = () => {
     }
 
     try {
-      // Send a POST request to the backend API
+      console.log(`${process.env.NEXT_PUBLIC_API_URL}/api/login/`)
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/login/`,
         {

@@ -36,7 +36,7 @@ const SignupPage = () => {
 
     try {
       const response = await axios.post(
-        "https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev/signup/",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/signup/`,
         {
           username,
           password,

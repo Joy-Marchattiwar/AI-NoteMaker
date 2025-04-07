@@ -1,6 +1,6 @@
 # tasks.py
 import json
-from myutils import get_context, google_search_image, request_OpenRouter
+from .myutils import get_context, google_search_image, request_OpenRouter
 from celery import shared_task
 
 @shared_task

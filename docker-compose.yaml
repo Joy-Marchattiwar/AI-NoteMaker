@@ -1,8 +1,8 @@
-version: "3.8"
-
 services:
   backend:
-    build: ./NoteCraft_backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.web
     ports:
       - "8000:8000"
     volumes:
@@ -11,24 +11,20 @@ services:
       - .env
     depends_on:
       - db
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
+  celery:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.celery
     depends_on:
       - backend
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypass
+      - redis
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+      - ./backend:/app
+    env_file:
+      - .env
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0

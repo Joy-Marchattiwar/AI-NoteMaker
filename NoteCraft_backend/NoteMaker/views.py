@@ -10,63 +10,33 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from rest_framework import status
 import json
+from .tasks import generate_notes_task
+from celery.result import AsyncResult
+
 class HelloWorldView(APIView):
     def get(self, request:Request)->Response:
         return Response({"message": "Hello, world!"})
 
 class GenerateNoteView(APIView):
-    def post(self, request:Request)->Response:
+    def post(self, request:Request) -> Response:
         params = request.data.get("params", {}) # type: ignore
-
-        if not isinstance(params, dict):
-            return Response({"error": "params must be a dictionary"}, status=400)
-
-        query = params.get("query", "")
+        query = params.get("query", "") # type: ignore
         if not query:
             return Response({"error": "query parameter is required"}, status=400)
 
-        prompt = query + topics_query
-        try:
-            response:str=request_OpenRouter(prompt)
-            start:int = response.find("```json") + len("```json")
-            end:int = response.find("```", start)
-            json_str:str = response[start:end].strip()
-            fresponse:Dict=json.loads(json_str)
-        except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        context=get_context(prompt,namespace=fresponse['namespace'])
+        prompt_1 = query + topics_query
 
+        task = generate_notes_task.delay(prompt_1)
+        return Response({"message": "Note generation started", "task_id": task.id})
 
-
-        prompt:str= "Objective: Act as an expert academic note-taking assistant. " \
-        f"Generate comprehensive, well-structured notes on {fresponse['topics']}\
-        InstructionsStructure: Organize notes hierarchically with headings, subheadings and keep theword count high,\
-        Focus on clarity, accuracy, and relevance do not add double new line or meta text ever\
-        to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
-        example- &&&image:(diagram of the human eye)&&& use 1-2 images per heading at max\
-        output should be in ```markdown box keep the markup syntax the notes should always be generated in full length and no meta text shouldbe there \
-        examples where applicable.Context: {context}"
-        try:
-            notes:str=request_OpenRouter(prompt)
-            start = notes.find("```markdown") + len("```markdown")
-            end = notes.find("```", start)
-            notes=notes[start:end].strip()
-        except (TypeError,RequestException) as e:
-            return Response({"message": "Error in response from OpenRouter","error": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-        arr=notes.split("&&&")
-        processed_notes = []
-
-        for line in arr:
-                if line.startswith("image:"):
-                    image_query = line.split("image:", 1)[1].strip()
-                    image_url = google_search_image(image_query)
-                    processed_notes.append(f"![{image_query}]({image_url})")
-                else:
-                    processed_notes.append(line)
-
-        return Response({"message": "Notes generated successfully","notes": "".join(processed_notes)})
+class TaskStatusView(APIView):
+    def get(self, request:Request, task_id):
+        result = AsyncResult(task_id)
+        return Response({
+            "task_id": task_id,
+            "state": result.state,
+            "result": result.result if result.ready() else None
+        })
 
 
 class ModifyTextView(APIView):

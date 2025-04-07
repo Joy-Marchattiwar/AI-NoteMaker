@@ -33,4 +33,5 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('logout/', LogoutView.as_view(), name="logout"),
     path('auth-status/', AuthStatusView.as_view(), name="auth-status"),
+    path('task_status/<str:task_id>/', TaskStatusView.as_view(), name='task_status'),
 ]

@@ -19,7 +19,29 @@ const Page = () => {
   });
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
+  const pollTaskStatus = async (taskId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await axios.get(`https://notecraft-backend-ag98.onrender.com/task_status/?task_id=${taskId}`);
+        const status = res.data.status || res.data.state;
+  
+        if (status === "done" || status === "SUCCESS") {
+          clearInterval(interval);
+          setResults(res.data.notes);
+          setLoading(false);
+        } else if (status === "failed" || status === "error") {
+          clearInterval(interval);
+          toast.error("Failed to generate notes.");
+          setLoading(false);
+        }
+      } catch (err) {
+        clearInterval(interval);
+        toast.error("Something went wrong while checking status.");
+        setLoading(false);
+      }
+    }, 10000);
+  };
+  
   const handleSearch = async (query: string) => {
     if (!query) return;
     setQuery(query);
@@ -31,12 +53,14 @@ const Page = () => {
           params: { query: query },
         },
       );
-      setResults(response.data);
+      const taskId = response.data.task_id;
+      pollTaskStatus(taskId);
+      // setResults(response.data);
       // setTimeout(() => {
       //   setResults(res);
       //   setLoading(false);
       // }, 5000);
-      setLoading(false);
+      // setLoading(false);
     } catch (error) {
       toast.error("Error occured while fetching notes please retry")
       setLoading(false);

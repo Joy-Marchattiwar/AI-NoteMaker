@@ -336,7 +336,7 @@ async function waitForImagesToLoad(element: { getElementsByTagName: (arg0: strin
 const uploadPdf = async (formData: FormData, refreshTokenFn: () => Promise<boolean>) => {
   try {
     let response = await axios.post(
-      "/add_pdf/", 
+      "https://notecraft-backend-ag98.onrender.com/add_pdf/", 
       formData,
       {
         headers: {
@@ -353,7 +353,7 @@ const uploadPdf = async (formData: FormData, refreshTokenFn: () => Promise<boole
       if (refreshed) {
         // Retry the request with the new token
         response = await axios.post(
-          "/add_pdf/", 
+          "https://notecraft-backend-ag98.onrender.com/add_pdf/", 
           formData,
           {
             headers: {

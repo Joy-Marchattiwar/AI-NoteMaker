@@ -108,6 +108,10 @@ CACHES = {
         'TIMEOUT': 86400, 
     }
 }
+CELERY_BROKER_URL = "redis://:red-cvpqphq4d50c73bsqe6g@redis-6379"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
 
 
 # Cloudinary configuration

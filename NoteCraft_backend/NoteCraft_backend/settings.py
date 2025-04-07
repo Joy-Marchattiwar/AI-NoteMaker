@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['notecraft-zi3w.onrender.com','notecraft-backend-ag98.onrender.com','localhost', '127.0.0.1','https://bug-free-fortnight-ggxqrr4579v2wr79-3000.app.github.dev','https://bug-free-fortnight-ggxqrr4579v2wr79-8000.app.github.dev']
+ALLOWED_HOSTS = ['notecraft-zi3w.onrender.com','notecraft-backend-ag98.onrender.com']
 
 
 AUTH_USER_MODEL = 'UserData.User'

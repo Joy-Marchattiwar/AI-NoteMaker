@@ -67,7 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
 ]
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (not safe for production)
+#CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins (not safe for production)
 
 ROOT_URLCONF = 'NoteCraft_backend.urls'
 
@@ -165,7 +165,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True  # Required for cookies
-# CORS_ALLOWED_ORIGINS = ["https://bug-free-fortnight-ggxqrr4579v2wr79-3000.app.github.dev","http://localhost:3000"]
+CORS_ALLOWED_ORIGINS = ['https://notecraft-zi3w.onrender.com','https://notecraft-backend-ag98.onrender.com']
 CORS_ALLOW_METHODS = [
     "GET",
     "POST",
@@ -183,3 +183,10 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True

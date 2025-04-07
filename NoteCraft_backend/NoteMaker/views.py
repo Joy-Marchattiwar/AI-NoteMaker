@@ -43,12 +43,12 @@ class GenerateNoteView(APIView):
         InstructionsStructure: Organize notes hierarchically with headings, subheadings and keep theword count high,\
         Focus on clarity, accuracy, and relevance do not add double new line or meta text ever\
         to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
-        example- &&&image:(diagram of the human eye)&&& use 2-3 images per heading at max\
-        output should be in ```text box\
+        example- &&&image:(diagram of the human eye)&&& use 1-2 images per heading at max\
+        output should be in ```markdown box keep the markup syntax the notes should always be generated in full length and no meta text shouldbe there \
         examples where applicable.Context: {context}"
         try:
             notes:str=request_OpenRouter(prompt)
-            start = notes.find("```text") + len("```text")
+            start = notes.find("```markdown") + len("```markdown")
             end = notes.find("```", start)
             notes=notes[start:end].strip()
         except (TypeError,RequestException) as e:

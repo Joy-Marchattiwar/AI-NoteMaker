@@ -22,7 +22,7 @@ const Page = () => {
   const pollTaskStatus = async (taskId: string) => {
     const interval = setInterval(async () => {
       try {
-        const res = await axios.get(`https://notecraft-backend-ag98.onrender.com/task_status/?task_id=${taskId}`);
+        const res = await axios.get(`https://notecraft-backend-ag98.onrender.com/task_status/${taskId}/`);
         const status = res.data.status || res.data.state;
   
         if (status === "done" || status === "SUCCESS") {

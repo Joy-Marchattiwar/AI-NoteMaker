@@ -34,4 +34,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name="logout"),
     path('auth-status/', AuthStatusView.as_view(), name="auth-status"),
     path('task_status/<str:task_id>/', TaskStatusView.as_view(), name='task_status'),
+    path('cancel_task/', CancelTaskView.as_view(), name='cancel_task'),
 ]

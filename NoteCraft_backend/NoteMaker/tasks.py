@@ -16,12 +16,12 @@ def generate_notes_task(prompt_1:str) -> dict:
         context = get_context(prompt_1, namespace=fresponse['namespace'])
 
         prompt_2:str= "Objective: Act as an expert academic note-taking assistant. " \
-        f"Generate comprehensive, well-structured notes on {fresponse['topics']}\
+        f"Generate comprehensive, well-structured notes on {fresponse['topics']} with all tpics covered\
         InstructionsStructure: Organize notes hierarchically with headings, subheadings and keep theword count high,\
         Focus on clarity, accuracy, and relevance do not add double new line or meta text ever\
         to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\
-        example- &&&image:(diagram of the human eye)&&& use 1-2 images per heading at max\
-        output should be in ```markdown box keep the markup syntax the notes should always be generated in full length and no meta text shouldbe there \
+        example- &&&image:(diagram of the human eye)&&& use 2-3 images per heading at max\
+        output should be in ```markdown box keep the markup syntax the notes should have plenty text \
         examples where applicable.Context: {context}"
         notes = request_OpenRouter(prompt_2)
         start = notes.find("```markdown") + len("```markdown")

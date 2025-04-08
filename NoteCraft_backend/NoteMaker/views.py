@@ -12,6 +12,7 @@ from rest_framework import status
 import json
 from .tasks import generate_notes_task
 from celery.result import AsyncResult
+from ..NoteCraft_backend.celery import app
 
 class HelloWorldView(APIView):
     def get(self, request:Request)->Response:
@@ -85,3 +86,9 @@ class ProxyImageView(APIView):
 
         except requests.RequestException as e:
             return Response({"error": f"Failed to fetch image: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class CancelTaskView(APIView):
+    def post(self, request: Request):
+        task_id = request.data.get("task_id")  # type: ignore
+        app.control.revoke(task_id, terminate=True)  
+        return Response({"error": "Missing task_id"}, status=400)

@@ -11,23 +11,38 @@ import { toast } from "sonner";
 
 const Page = () => {
   const [result, setResults] = useState<{
-    message: string;
+    success: boolean;
     notes: string;
   }>({
-    message: "",
+    success: false,
     notes: "",
   });
+  const taskIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (taskIdRef.current) {
+        const data = JSON.stringify({ task_id: taskIdRef });
+        navigator.sendBeacon('/cancel_task/', data);
+      }
+    };
+  
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [taskIdRef.current
+  ]);
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const pollTaskStatus = async (taskId: string) => {
+  const pollTaskStatus = async (taskId: string |null)=> {
     const interval = setInterval(async () => {
       try {
         const res = await axios.get(`https://notecraft-backend-ag98.onrender.com/task_status/${taskId}/`);
         const status = res.data.status || res.data.state;
-  
+        
         if (status === "done" || status === "SUCCESS") {
           clearInterval(interval);
-          setResults(res.data.notes);
+          setResults(res.data.result);
           setLoading(false);
         } else if (status === "failed" || status === "error") {
           clearInterval(interval);
@@ -53,8 +68,8 @@ const Page = () => {
           params: { query: query },
         },
       );
-      const taskId = response.data.task_id;
-      pollTaskStatus(taskId);
+      taskIdRef.current = response.data.task_id;
+      pollTaskStatus(taskIdRef.current);
       // setResults(response.data);
       // setTimeout(() => {
       //   setResults(res);

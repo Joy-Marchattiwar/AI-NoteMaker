@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["celery", "-A", "NoteCraft_backend", "worker", "--loglevel=info"]
+CMD sh -c "python3 -m http.server 9999 & celery -A NoteCraft_backend worker --loglevel=info"

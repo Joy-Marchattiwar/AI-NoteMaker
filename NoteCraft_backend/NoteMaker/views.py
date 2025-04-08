@@ -12,7 +12,8 @@ from rest_framework import status
 import json
 from .tasks import generate_notes_task
 from celery.result import AsyncResult
-from ..NoteCraft_backend.celery import app
+from celery import Celery
+app=Celery('NoteCraft')
 
 class HelloWorldView(APIView):
     def get(self, request:Request)->Response:

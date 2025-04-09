@@ -139,7 +139,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
                 Github
               </Link>
               <Link
-                href="shlokarora2709.github.io/"
+                href="https://shlokarora2709.github.io/"
                 className="text-sm font-medium hover:underline underline-offset-4 flex items-center gap-2"
                 target="_blank"
               >

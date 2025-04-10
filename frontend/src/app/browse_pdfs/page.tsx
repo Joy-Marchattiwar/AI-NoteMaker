@@ -44,9 +44,9 @@ const DocumentsPage = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 p-6 flex flex-col justify-center items-center">
       <h1 className="text-3xl font-bold text-center mb-6">Search Documents</h1>
-      <p className="text-lg text-gray-600 mb-5 text-center">
+      <p className="text-lg text-gray-600 mb-5 text-center max-w-xl">
         Enter your query below and get the notes generated for you.
       </p>
       <div className="flex flex-col items-center mb-6">

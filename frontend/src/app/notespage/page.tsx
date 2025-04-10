@@ -17,6 +17,7 @@ const Page = () => {
     success: false,
     notes: "",
   });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const taskIdRef = useRef<string | null>(null);
   useEffect(() => {
     const handleBeforeUnload = () => {
@@ -101,7 +102,10 @@ const Page = () => {
   };
   return (
     <div className="flex flex-col items-center">
-      <h1 className="text-4xl font-bold mt-12 mb-5">Build Notes</h1>
+      <h1 className="text-4xl font-bold mt-12 mb-3">Build Notes</h1>
+      <p className="text-lg text-gray-600 mb-5 w-180 justify-center text-center">
+        {isEditing?"Select the text you want to modify and click on the modify button.To modify images, select the image markdown (e.g., ![alt text](image_url)) and click modify.":"Enter your query below and get the notes generated for you."}
+      </p>
       <SearchBar onSearch={handleSearch} />
       {loading && <div className="loader mt-2"></div>}
 
@@ -111,6 +115,10 @@ const Page = () => {
             markdown={replaceMathDelimiters(result.notes)}
             onSave={handleSaveMarkdown}
             name={query}
+            isLoading={loading}
+            setLoading={setLoading}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
           />
         </div>
       )}

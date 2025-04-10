@@ -7,6 +7,7 @@ interface EditorProps {
   onModify: () => void;
   onCancel: () => void;
   onSave: () => void;
+  isLoading?: boolean;
 }
 
 export const Editor = React.memo(({
@@ -15,7 +16,8 @@ export const Editor = React.memo(({
   onChange,
   onModify,
   onCancel,
-  onSave
+  onSave,
+  isLoading
 }: EditorProps) => {
   return (
     <div className="border border-gray-300 rounded-md p-2">
@@ -24,6 +26,8 @@ export const Editor = React.memo(({
         className="w-full p-4 border border-gray-200 rounded-md min-h-64"
         value={content}
         onChange={onChange}
+        disabled={isLoading}
+        rows={25}
       />
       <div className="flex justify-end gap-2 mt-4">
         <button

@@ -10,19 +10,27 @@ import { Dialog, DialogTitle, DialogContent, DialogTrigger, DialogHeader, Dialog
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner";
 
 interface MarkdownDocumentProps {
   markdown: string;
   onSave?: (updatedMarkdown: string) => void;
   name: string
+  isLoading: boolean;
+  setLoading: (loading: boolean) => void;
+  isEditing?: boolean;
+  setIsEditing: (editing: boolean) => void;
 }
 
 const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
   markdown,
   onSave,
-  name
+  name,
+  isLoading,
+  setLoading,
+  isEditing,
+  setIsEditing,
 }) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editingContent, setEditingContent] = useState<string>(markdown);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const markdownRef = useRef<HTMLDivElement | null>(null);
@@ -68,7 +76,8 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
     if (!selectedText) return;
     
     try {
-      const newContent = await modifyContent(selectedText);
+      setLoading(true);
+      const newContent = await modifyContent(selectedText.trim());
       if (newContent) {
         const textBefore = textarea.value.substring(0, start);
         const textAfter = textarea.value.substring(end);
@@ -84,9 +93,14 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
             textareaRef.current.focus();
           }
         }, 0);
+        toast.success("Content modified successfully!");
       }
     } catch (error) {
       console.error("Error modifying content:", error);
+      toast.error("Error modifying content. Please try again.");
+    }
+    finally{
+      setLoading(false);
     }
   }, []);
 
@@ -97,6 +111,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
       await exportToPdf(markdownRef.current, pdfSettings, refreshToken, docName);
     } catch (error) {
       console.error("Error generating PDF:", error);
+      toast.error("Error generating PDF. Please try again.");
     } finally {
       setExportLoading(false);
     }
@@ -116,6 +131,7 @@ const MarkdownDocument: React.FC<MarkdownDocumentProps> = React.memo(({
       onModify={handleModify}
       onCancel={handleCancel}
       onSave={handleSave}
+      isLoading={isLoading}
     />
   ), [editingContent, handleChange, handleModify, handleCancel, handleSave]);
 

@@ -16,7 +16,7 @@ def generate_notes_task(prompt_1:str) -> dict:
         context = get_context(prompt_1, namespace=fresponse['namespace'])
 
         prompt_2:str= "Objective: Act as an expert academic note-taking assistant. " \
-        f"Generate comprehensive, well-structured notes on {fresponse['topics']} with all tpics covered\
+        f"Generate comprehensive, well-structured notes on {fresponse['topics']} with all tpics covered if context given later is irrelevent to topics, ignore it\
         InstructionsStructure: Organize notes hierarchically with headings, subheadings and keep theword count high,\
         Focus on clarity, accuracy, and relevance do not add double new line or meta text ever\
         to include images write &&&image:(description of image)&&& at the place where you want to add the image this should be done in between the text\

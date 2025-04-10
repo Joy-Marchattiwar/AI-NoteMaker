@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['notecraft-zi3w.onrender.com','notecraft-backend-ag98.onrender.com']
 
@@ -108,7 +108,7 @@ CACHES = {
         'TIMEOUT': 86400, 
     }
 }
-CELERY_BROKER_URL = "redis://red-cvpqphq4d50c73bsqe6g:6379"
+CELERY_BROKER_URL = os.getenv('REDIS_URL')
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'

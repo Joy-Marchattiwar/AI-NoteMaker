@@ -174,7 +174,7 @@ export const exportToPdf = async (
     const contentWidth = preparedContent.offsetWidth;
     
     // Wait for content to fully render
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     const scale = (pdfWidth - margins * 2) / contentWidth;
     const contentHeight = preparedContent.offsetHeight;

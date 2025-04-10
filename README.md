@@ -5,16 +5,16 @@ NoteCraft is a modern full-stack web application for managing notes and user dat
 
 ## 📑 Index
 
-1. [📁 Project Structure](#📁-project-structure)  
-2. [🚀 Features](#🚀-features)  
-3. [🖼️ System Architecture](#🖼️-system-architecture)  
-4. [🧪 Development Tools](#🧪-development-tools)  
-5. [📂 Academic Namespaces](#📂-academic-namespaces)  
-6. [🚀 RAG Pipeline](#🚀-rag-pipeline)  
-7. [📸 Image Rendering Format](#📸-image-rendering-format)  
-8. [🛠 Setup & Installation](#🛠-setup--installation)  
-9. [⚙️ Environment Variables (.env)](#⚙️-environment-variables-env)  
-10. [📌 Useful Commands](#📌-useful-commands)
+1. [📁 Project Structure](#project-structure)  
+2. [🚀 Features](#features)  
+3. [🖼️ System Architecture](#system-architecture)  
+4. [🧪 Development Tools](#development-tools)  
+5. [📂 Academic Namespaces](#academic-namespaces)  
+6. [🚀 RAG Pipeline](#rag-pipeline)  
+7. [📸 Image Rendering Format](#image-rendering-format)  
+8. [🛠 Setup & Installation](#setup--installation)  
+9. [⚙️ Environment Variables (.env)](#environment-variables-env)  
+10. [📌 Useful Commands](#useful-commands)
 
 
 ## 📁 Project Structure
@@ -115,7 +115,7 @@ NoteCraft is a modern full-stack web application for managing notes and user dat
 | Storage    | Cloudinary                      |
 | DevOps     | Docker, Docker Compose          |
 
-
+<div style="display: flex; gap: 10px; align-items: center;">
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg" height=50px width=50px/>
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-plain.svg"height=50px width=50px />
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/djangorest/djangorest-line.svg" height=50px width=50px/>
@@ -124,7 +124,7 @@ NoteCraft is a modern full-stack web application for managing notes and user dat
  <img src="https://www.make.com/_next/image?url=https%3A%2F%2Fimages.ctfassets.net%2Fun655fb9wln6%2FappIcon-pinecone%2Fb8570f90d0eeb98ffb03a35f5bf3782e%2Fpinecone.png&w=3840&q=90" height=50px width=50px />
  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg" height=50px width=50px/>
  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg" height=50px width=50px/>
-          
+</div> 
           
 
 ## 📂 Academic Namespaces

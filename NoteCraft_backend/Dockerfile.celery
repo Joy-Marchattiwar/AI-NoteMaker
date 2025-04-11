@@ -9,4 +9,4 @@ RUN pip install --upgrade pip setuptools wheel \
 
 COPY . .
 
-CMD ["sh", "-c", "python3 -m http.server 9999 & celery -A NoteCraft_backend worker --loglevel=info"]
+CMD ["sh", "-c", "celery -A NoteCraft_backend worker --loglevel=info & uvicorn NoteCraft_backend.keepalive:app --host 0.0.0.0 --port 9999"]

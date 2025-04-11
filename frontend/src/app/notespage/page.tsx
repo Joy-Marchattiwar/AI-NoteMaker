@@ -33,6 +33,12 @@ const Page = () => {
     };
   }, [taskIdRef.current
   ]);
+  // Inside your frontend (e.g., notes page)
+  useEffect(() => {
+    fetch("https://notecraft-1.onrender.com/")
+      .then(() => console.log("Pinged Celery service"));
+  }, []);
+
   const [query, setQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const pollTaskStatus = async (taskId: string |null)=> {

